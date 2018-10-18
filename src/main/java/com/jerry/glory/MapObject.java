@@ -1,6 +1,6 @@
 package com.jerry.glory;
 
-public abstract class MapObject {
-	String appearance;
+public interface MapObject {
+	void drawOnMap(String [][] Map);
 
 }

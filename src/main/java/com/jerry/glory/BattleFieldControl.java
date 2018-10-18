@@ -6,12 +6,12 @@ import java.util.*;
  * @author Jerry
  */
 
-public class BattleField {
+public class BattleFieldControl {
 	int ScreenWidth;
 	int ScreenHeight;
 	String [][] Map;
 	Vector<Hero> heroes;
-	BattleField(int width, int height) {
+	BattleFieldControl(int width, int height) {
 		ScreenWidth = width;
 		ScreenHeight = height;
 		heroes = new java.util.Vector<Hero>();
@@ -19,15 +19,21 @@ public class BattleField {
 		for(int i = 0;i < height;i++)
 			for(int j = 0;j < width;j++)
 				Map[i][j] = "-";
-
 		heroes.insertElementAt(new Hero(2,3),0);
 	}
 	public void paintBattleField() {
 		for(int i = 0;i < ScreenHeight;i++)
 			for(int j = 0;j < ScreenWidth;j++)
-				Map[i][j] = "-";
+				Map[i][j] = "🕸";
+
+
+//		for(int i = 0;i < heroes.size();i++) {
+//			printAppearanceOnMap(heroes.elementAt(i).appearance,2,3);
+//		}
+
+
 		for(int i = 0;i < heroes.size();i++) {
-			printAppearanceOnMap(heroes.elementAt(i).appearance,2,3);
+			heroes.elementAt(i).drawOnMap(Map);
 		}
 	}
 	public void printBattleField() {
@@ -38,12 +44,13 @@ public class BattleField {
 			System.out.println();
 		}
 	}
+
 	private void printAppearanceOnMap(String appearance, int xOffSet,int yOffSet) {
 		Map[xOffSet][yOffSet] = appearance;
 	}
 	public static void main(String [] args) {
-		BattleField battleField = new BattleField(50,30);
-		battleField.printBattleField();
+		BattleFieldControl battleFieldControl = new BattleFieldControl(50,10);
+		battleFieldControl.printBattleField();
 	}
 
 }
