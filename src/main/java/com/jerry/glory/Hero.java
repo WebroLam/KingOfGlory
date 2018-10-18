@@ -10,16 +10,13 @@ public class Hero implements MapObject{
 	int currentMP;
 	int level;
 	int currentExp;
-
-	int xLoc,yLoc;
+	boolean isAccessible = false;
 	String appearance;
 
-	Hero(int x, int y) {
+	Hero() {
 		appearance = "😺";
-		xLoc = x;
-		yLoc = y;
 	}
-	public void drawOnMap(String [][]Map) {
-		Map[yLoc][xLoc] = appearance;
+	public void drawOnMap(String [][]Map, Location loc) {
+		Map[loc.yLoc][loc.xLoc] = appearance;
 	}
 }
