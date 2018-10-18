@@ -27,9 +27,9 @@ public class BattleMap {
 	 * Draw all the map objects on the map.
 	 * @param objects HashMap of all the MapObject.
 	 */
-	void DrawObjects(HashMap<MapObject, Location> objects) {
+	void DrawObjects(HashMap<com.jerry.mapObjects.MapObject, com.jerry.mapObjects.Location> objects) {
 		initMap();
-		for(MapObject key : objects.keySet()) {
+		for(com.jerry.mapObjects.MapObject key : objects.keySet()) {
 			key.drawOnMap(Map,objects.get(key));
 		}
 	}

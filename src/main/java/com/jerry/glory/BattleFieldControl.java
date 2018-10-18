@@ -1,5 +1,6 @@
 package com.jerry.glory;
 import java.util.*;
+import com.jerry.mapObjects.*;
 /**
  * The battle field of the game.
  * The VIEW of the whole program
@@ -12,7 +13,7 @@ public class BattleFieldControl {
 	int playingPlayerIndex;
 	BattleMap Map;
 	Vector<Hero> heroes;
-	HashMap<MapObject,Location> mapObjectLocation;
+	HashMap<com.jerry.mapObjects.MapObject, com.jerry.mapObjects.Location> mapObjectLocation;
 
 
 	BattleFieldControl(int width, int height) {
@@ -20,7 +21,7 @@ public class BattleFieldControl {
 		ScreenHeight = height;
 		heroes = new java.util.Vector<Hero>();
 		Map = new BattleMap(ScreenHeight,ScreenWidth);
-		mapObjectLocation = new HashMap<MapObject, Location>();
+		mapObjectLocation = new HashMap<com.jerry.mapObjects.MapObject, com.jerry.mapObjects.Location>();
 		playingPlayerIndex = 0;
 		addHero();
 		addObjects();
@@ -37,12 +38,12 @@ public class BattleFieldControl {
 
 	private void addObjects() {
 		for(int j =0;j < ScreenHeight;j++) {
-			mapObjectLocation.put(new MapBoundaries(),new Location(0,j));
-			mapObjectLocation.put(new MapBoundaries(),new Location(ScreenWidth - 1,j));
+			mapObjectLocation.put(new MapBoundaries(),new com.jerry.mapObjects.Location(0,j));
+			mapObjectLocation.put(new MapBoundaries(),new com.jerry.mapObjects.Location(ScreenWidth - 1,j));
 		}
 		for(int i = 0;i < ScreenWidth;i++) {
-			mapObjectLocation.put(new MapBoundaries(),new Location(i,0));
-			mapObjectLocation.put(new MapBoundaries(),new Location(i,ScreenHeight - 1));
+			mapObjectLocation.put(new MapBoundaries(),new com.jerry.mapObjects.Location(i,0));
+			mapObjectLocation.put(new MapBoundaries(),new com.jerry.mapObjects.Location(i,ScreenHeight - 1));
 		}
 	}
 
@@ -52,6 +53,7 @@ public class BattleFieldControl {
 		Map.DrawObjects(mapObjectLocation);
 		Map.PrintMap();
 	}
+
 
 //		for(int i = 0;i < heroes.size();i++) {
 //			printAppearanceOnMap(heroes.elementAt(i).appearance,2,3);
@@ -83,84 +85,3 @@ public class BattleFieldControl {
 }
 
 
-/**
- * The location of an object in the map.
- */
-class Location {
-	int xLoc;
-	int yLoc;
-
-	Location(int x, int y) {
-		xLoc = x;
-		yLoc = y;
-	}
-	void MoveRight() {
-		xLoc++;
-	}
-	void MoveLeft() {
-		xLoc--;
-	}
-	void MoveUp() {
-		yLoc--;
-	}
-	void MoveDown() {
-		yLoc++;
-	}
-	boolean MoveRight(HashMap<MapObject, Location> locations) {
-		for(Location loc : locations.values()) {
-			if(xLoc + 1 == loc.xLoc && yLoc == loc.yLoc)
-				return false;
-		}
-		xLoc++;
-		return true;
-	}
-	boolean MoveLeft(HashMap<MapObject, Location> locations) {
-		for(Location loc : locations.values()) {
-			if(xLoc - 1 == loc.xLoc && yLoc == loc.yLoc) {
-				return false;
-			}
-		}
-		xLoc--;
-		return true;
-	}
-	boolean MoveUp(HashMap<MapObject, Location> locations) {
-		for(Location loc : locations.values()) {
-			if(yLoc - 1 == loc.yLoc && xLoc == loc.xLoc) {
-				return false;
-			}
-		}
-		yLoc--;
-		return true;
-	}
-	boolean MoveDown(HashMap<MapObject, Location> locations) {
-		for(Location loc : locations.values()) {
-			if(yLoc + 1 == loc.yLoc && xLoc == loc.yLoc) {
-				return false;
-			}
-		}
-		yLoc++;
-		return true;
-	}
-	boolean Move(int direction, HashMap<MapObject, Location> locations) {
-		switch(direction) {
-			case 0:
-				if (! MoveUp(locations) )
-					return false;
-				break;
-			case 1:
-				if( ! MoveRight(locations))
-					return false;
-				break;
-			case 2:
-				if( !MoveDown(locations))
-					return false;
-				break;
-			case 3:
-				if( !MoveLeft(locations))
-					return false;
-				break;
-		}
-		return true;
-	}
-
-}
