@@ -1,5 +1,6 @@
 package com.jerry.glory;
 import java.util.HashMap;
+import com.jerry.mapObjects.*;
 /**
  * The Map of the game.
  * <br/>
@@ -27,9 +28,9 @@ public class BattleMap {
 	 * Draw all the map objects on the map.
 	 * @param objects HashMap of all the MapObject.
 	 */
-	void DrawObjects(HashMap<com.jerry.mapObjects.MapObject, com.jerry.mapObjects.Location> objects) {
+	void DrawObjects(HashMap<MapObject, Location> objects) {
 		initMap();
-		for(com.jerry.mapObjects.MapObject key : objects.keySet()) {
+		for(MapObject key : objects.keySet()) {
 			key.drawOnMap(Map,objects.get(key));
 		}
 	}
