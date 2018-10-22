@@ -1,4 +1,6 @@
 package com.jerry.mapObjects;
+import java.util.Vector;
+
 
 public class Hero implements com.jerry.mapObjects.MapObject {
 	double attackDistance;
@@ -21,6 +23,8 @@ public class Hero implements com.jerry.mapObjects.MapObject {
 											1000,1200,1400,1500,1600,1600,
 											1600,1600,1600,1600,1600};
 
+
+
 	public Hero() {
 		appearance = "😺";
 		level = 1;
@@ -40,6 +44,8 @@ public class Hero implements com.jerry.mapObjects.MapObject {
 	}
 	private void levelUp() {
 		level++;
+		currentHealth   += (maxHealth - currentHealth) * 0.5;
+		currentMP       += (maxMP - currentMP) * 0.5;
 		attackDamage *= attackDamageIncreaseSpeed;
 		AbilityPower *= AbilityPowerIncreaseSped;
 		maxHealth *= HealthIncreaseSpeed;

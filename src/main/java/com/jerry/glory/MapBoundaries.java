@@ -3,8 +3,11 @@ import com.jerry.mapObjects.*;
 public class MapBoundaries implements MapObject {
 
 	String appearance;
-	MapBoundaries() {
+	public MapBoundaries() {
 		appearance = "🌳";
+	}
+	public MapBoundaries(String appearance) {
+		this.appearance = appearance;
 	}
 
 	public void drawOnMap(String [][] Map, Location loc) {
