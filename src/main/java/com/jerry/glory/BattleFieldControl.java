@@ -4,42 +4,52 @@ import com.jerry.mapObjects.*;
 import org.json.*;
 import java.io.FileReader;
 import java.io.File;
+
 /**
  * The battle field of the game.
- * The VIEW of the whole program
+ * The Controller of the whole program
  * @author Jerry
  */
-
 public class BattleFieldControl {
-	int ScreenWidth;
-	int ScreenHeight;
-	int playingPlayerIndex;
-	BattleMap Map;
-	Vector<Hero> heroes;
-	HashMap<MapObject, Location> mapObjectLocation;
-	final static String ConfigurationFilePath = "src/main/resources/";
-
-	BattleFieldControl(int width, int height) {
+	private int ScreenWidth;
+	private int ScreenHeight;
+	private int playingPlayerIndex;
+	private BattleMap Map;
+	private Vector<Hero> heroes;
+	private HashMap<MapObject, Location> mapObjectLocation;
+	private final static String ResourcesFilePath = "src/main/resources/";
+	private Location[] SpawnPointTeamRed;
+	private Location[] SpawnPointTeamBlue;
+	public BattleFieldControl(int width, int height) {
 		ScreenWidth = width;
 		ScreenHeight = height;
 		heroes = new java.util.Vector<Hero>();
 		Map = new BattleMap(ScreenHeight,ScreenWidth);
 		mapObjectLocation = new HashMap<MapObject, Location>();
 		playingPlayerIndex = 0;
+		SpawnPointTeamRed = new Location[10];
+		SpawnPointTeamBlue = new Location[10];
+
 		addHero();
 		addObjects();
+
 	}
 
-	private static String readJSONStringFromFile(String fileName) {
+	/**
+	 * To take a json file into a String
+	 * @param fileName the name of the file. The file shall be in resources folder.
+	 * @return Casted String of the file.
+	 */
+	private static String readJSONStringFromFile(final String fileName) {
 		FileReader fr;
-		File file = new File(ConfigurationFilePath + fileName);
+		File file = new File(ResourcesFilePath + fileName);
 		try {
 			fr = new FileReader(file);
 		} catch(java.io.FileNotFoundException e) {
 			System.out.println("Fuck, " + e.getMessage());
 			return "";
 		}
-		char [] temp = new char[20000];
+		char [] temp = new char[9000000];
 		try {
 			fr.read(temp);
 		} catch(java.io.IOException e) {
@@ -49,6 +59,10 @@ public class BattleFieldControl {
 		String jsonString = new String(temp);
 		return jsonString;
 	}
+
+	/**
+	 * Add Hero to the Game.
+	 */
 	private void addHero() {
 		final int heroSize = 10;
 //		heroes.insertElementAt(new Hero(),0);
@@ -60,13 +74,23 @@ public class BattleFieldControl {
 //		}
 
 		JSONObject jsonObject = new JSONObject(readJSONStringFromFile("Heroes.json"));
-		
-		for (int i = 0; i < heroes.size(); i++) {
+		JSONArray heroJSON = jsonObject.getJSONArray("Heroes");
+		for(int i = 0;i < heroJSON.length();i++) {
+			heroes.insertElementAt(new Hero(heroJSON.getJSONObject(i)),0);
+		}
+		for (int i = 0; i < heroes.size() / 2; i++) {
 			// #Locations: 1,1 3,1
 			mapObjectLocation.put(heroes.elementAt(i), new Location(i * 2 + 1, i + 1));
 		}
+		System.out.println(heroes.size());
+		for(int i = heroes.size() / 2 + 1;i < heroes.size();i++) {
+
+		}
 	}
 
+	/**
+	 * Add bounds to the game, such as trees.
+	 */
 	private void addObjects() {
 		for(int j =0;j < ScreenHeight;j++) {
 			mapObjectLocation.put(new MapBoundaries(),new com.jerry.mapObjects.Location(0,j));
@@ -89,18 +113,15 @@ public class BattleFieldControl {
 //			mapObjectLocation.put(new MapBoundaries(Integer.toString(i)),new Location(i,ScreenHeight - 2));
 //		}
 
-
-
-
-
+		//TODO: Find the object locations.
 		final int objLocations[] = {};
-
-
 
 	}
 
 
-
+	/**
+	 * Paint the Whole Map again and print it on the screen.
+	 */
 	public void PrintMap() {
 		Map.DrawObjects(mapObjectLocation);
 		Map.PrintMap();
@@ -111,6 +132,12 @@ public class BattleFieldControl {
 //			printAppearanceOnMap(heroes.elementAt(i).appearance,2,3);
 //		}
 
+	/**
+	 * Move a hero, step by step. Stops if meet an obstacle.
+	 * @param direction 1 for upward, 2 for right.
+	 * @param steps how many steps to move.
+	 * @return If the Hero move expected num of steps.
+	 */
 	public boolean moveHero(final int direction, int steps) {
 		Hero playingHero = heroes.elementAt(playingPlayerIndex);
 		Location movingLocation = mapObjectLocation.get(playingHero);
@@ -119,6 +146,7 @@ public class BattleFieldControl {
 			return false;
 		return true;
 	}
+
 	public static void main(String [] args) {
 		BattleFieldControl battleFieldControl = new BattleFieldControl(25,15);
 		battleFieldControl.PrintMap();

@@ -1,8 +1,39 @@
 {
-
   "Heroes":[
     {"id":1,
-      "appearance":"🐶"
+      "appearance":"🐶",
+      "attackDistance":0,
+      "attackDamage":0,
+      "attackDamageIncreaseSpeed":0,
+      "AbilityPower":0,
+      "AbilityPowerIncreaseSpeed":0,
+      "maxHealth":0,
+      "HealthIncreaseSpeed":0,
+      "MP":0
+    },
+    {
+      "id":2,
+      "appearance":"🦁",
+      "attackDistance":0,
+      "attackDamage":0,
+      "attackDamageIncreaseSpeed":0,
+      "AbilityPower":0,
+      "AbilityPowerIncreaseSpeed":0,
+      "maxHealth":0,
+      "HealthIncreaseSpeed":0,
+      "MP":0
+    },
+    {
+      "id":3,
+      "appearance":"🦋",
+      "attackDistance":0,
+      "attackDamage":0,
+      "attackDamageIncreaseSpeed":0,
+      "AbilityPower":0,
+      "AbilityPowerIncreaseSpeed":0,
+      "maxHealth":0,
+      "HealthIncreaseSpeed":0,
+      "MP":0
     }
   ]
 
