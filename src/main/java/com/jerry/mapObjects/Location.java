@@ -1,5 +1,6 @@
 package com.jerry.mapObjects;
 import java.util.HashMap;
+import java.math.*;
 /**
  * The location of an object in the map.
  */
@@ -11,28 +12,28 @@ public class Location {
 		xLoc = x;
 		yLoc = y;
 	}
-	void MoveRight() {
+	private void MoveRight() {
 		xLoc++;
 	}
-	void MoveLeft() {
+	private void MoveLeft() {
 		xLoc--;
 	}
-	void MoveUp() {
+	private void MoveUp() {
 		yLoc--;
 	}
-	void MoveDown() {
+	private void MoveDown() {
 		yLoc++;
 	}
-	boolean MoveRight(java.util.HashMap<com.jerry.mapObjects.MapObject, Location> locations) {
-		for(com.jerry.mapObjects.Location loc : locations.values()) {
+	private boolean MoveRight(HashMap<MapObject, Location> locations) {
+		for(Location loc : locations.values()) {
 			if(xLoc + 1 == loc.xLoc && yLoc == loc.yLoc)
 				return false;
 		}
 		xLoc++;
 		return true;
 	}
-	boolean MoveLeft(java.util.HashMap<com.jerry.mapObjects.MapObject, Location> locations) {
-		for(com.jerry.mapObjects.Location loc : locations.values()) {
+	private boolean MoveLeft(HashMap<MapObject, Location> locations) {
+		for(Location loc : locations.values()) {
 			if(xLoc - 1 == loc.xLoc && yLoc == loc.yLoc) {
 				return false;
 			}
@@ -40,8 +41,8 @@ public class Location {
 		xLoc--;
 		return true;
 	}
-	boolean MoveUp(java.util.HashMap<com.jerry.mapObjects.MapObject, Location> locations) {
-		for(com.jerry.mapObjects.Location loc : locations.values()) {
+	private boolean MoveUp(HashMap<MapObject, Location> locations) {
+		for(Location loc : locations.values()) {
 			if(yLoc - 1 == loc.yLoc && xLoc == loc.xLoc) {
 				return false;
 			}
@@ -49,8 +50,8 @@ public class Location {
 		yLoc--;
 		return true;
 	}
-	boolean MoveDown(java.util.HashMap<com.jerry.mapObjects.MapObject, Location> locations) {
-		for(com.jerry.mapObjects.Location loc : locations.values()) {
+	private boolean MoveDown(HashMap<MapObject, Location> locations) {
+		for(Location loc : locations.values()) {
 			if(yLoc + 1 == loc.yLoc && xLoc == loc.xLoc) {
 				return false;
 			}
@@ -58,7 +59,14 @@ public class Location {
 		yLoc++;
 		return true;
 	}
-	public boolean Move(int direction, java.util.HashMap<com.jerry.mapObjects.MapObject, Location> locations) {
+
+	/**
+	 * Move a certain character
+	 * @param direction The moving direction, 1 for upward, 2 for left
+	 * @param locations The whole objects of the game.
+	 * @return Indicates whether moving is successful.
+	 */
+	public boolean Move(int direction, HashMap<MapObject, Location> locations) {
 		switch(direction) {
 			case 0:
 				if (! MoveUp(locations) )
@@ -78,6 +86,15 @@ public class Location {
 				break;
 		}
 		return true;
+	}
+
+	/**
+	 * Calculate the distance to another point.
+	 * @param rhs The other point
+	 * @return The distance between two points.
+	 */
+	public double distanceTo(Location rhs) {
+		return Math.sqrt((xLoc - rhs.xLoc) * (xLoc - rhs.xLoc) + (yLoc - rhs.yLoc) * (yLoc - rhs.yLoc));
 	}
 
 }
