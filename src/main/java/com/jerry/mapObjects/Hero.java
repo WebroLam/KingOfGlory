@@ -52,7 +52,7 @@ public class Hero implements com.jerry.mapObjects.MapObject {
 	 */
 	public void gainXP(int XP) {
 		currentExp += XP;
-		if(currentExp > EXPNeedForLevelingUp[currentExp] && level < MAXLEVEL) {
+		if(currentExp >= EXPNeedForLevelingUp[currentExp] && level < MAXLEVEL) {
 			currentExp = 0;
 			levelUp();
 		}
