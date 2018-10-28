@@ -44,6 +44,22 @@
       "MP":200,
       "MPIncreaseSpeed":1.4,
       "Team":"Blue"
+    },
+
+    {
+      "id":4,
+      "appearance":"👼",
+      "attackDistance":3,
+      "attackDamage":50,
+      "attackSplit":0,
+      "attackDamageIncreaseSpeed":1.5,
+      "AbilityPower":10,
+      "AbilityPowerIncreaseSpeed":1.3,
+      "maxHealth":500,
+      "HealthIncreaseSpeed":1.3,
+      "MP":200,
+      "MPIncreaseSpeed":1.4,
+      "Team":"Blue"
     }
   ]
 

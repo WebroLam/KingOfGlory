@@ -101,10 +101,21 @@ public class Location {
 		return Math.sqrt((xLoc - rhs.xLoc) * (xLoc - rhs.xLoc) + (yLoc - rhs.yLoc) * (yLoc - rhs.yLoc));
 	}
 
-
+    /**
+     * Tell if two locations are equal
+     * @param rhs the location to compare to
+     * @return if two locations are equal.
+     */
 	public boolean equals(Location rhs) {
 		return xLoc == rhs.xLoc && yLoc == rhs.yLoc;
 	}
+
+
+    /**
+     * Make current location travel to another, move one step each direction each time.
+     * @param target to location to travel to.
+     * @return if current location has reached target location.
+     */
 	public boolean TravelTo(Location target) {
 		if(target.yLoc == yLoc && target.xLoc == xLoc) {
 			return true;

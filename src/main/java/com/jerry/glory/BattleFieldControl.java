@@ -1,6 +1,10 @@
 package com.jerry.glory;
 import java.util.*;
+
+import com.jerry.ability.Ability;
 import com.jerry.mapObjects.*;
+import com.jerry.mapObjects.heroes.Healer;
+import com.jerry.mapObjects.heroes.Hero;
 import org.json.*;
 import java.io.FileReader;
 import java.io.File;
@@ -74,14 +78,19 @@ public class BattleFieldControl {
 //		}
 
 		try{
-		JSONObject jsonObject = new JSONObject(readJSONStringFromFile("Heroes.json"));
-		JSONArray heroJSON = jsonObject.getJSONArray("Heroes");
-		for(int i = 0;i < heroJSON.length();i++) {
-			heroes.insertElementAt(new Hero(heroJSON.getJSONObject(i)),0);
-		}
+		    JSONObject jsonObject = new JSONObject(readJSONStringFromFile("Heroes.json"));
+		    JSONArray heroJSON = jsonObject.getJSONArray("Heroes");
+		    for(int i = 0;i < heroJSON.length() - 1;i++) {
+		    	heroes.insertElementAt(new Hero(heroJSON.getJSONObject(i)),0);
+		    }
+		    heroes.insertElementAt(new Healer(heroJSON.getJSONObject(heroJSON.length() - 1)),0);
+
+
 		} catch (JSONException e) {
 			System.out.println(e.toString());
 		}
+
+
 		for (int i = 0; i <= heroes.size() / 2; i++) {
 			// #Locations: 1,1 3,1
 			mapObjectLocation.put(heroes.elementAt(i), new Location(i * 2 + 1, i + 1));
@@ -145,7 +154,6 @@ public class BattleFieldControl {
 	 * @return If the Hero moved expected num of steps.
 	 */
 	public boolean moveHero(final char direction, int steps) {
-		Hero playingHero = heroes.elementAt(playingPlayerIndex);
 		Location movingLocation = mapObjectLocation.get(playingHero);
 		while(steps -- != 0 && movingLocation.Move(direction, mapObjectLocation));
 		if(steps != 0)
@@ -159,42 +167,36 @@ public class BattleFieldControl {
 			return false;
 		}
 		else  {
-			for (final Hero hero: heroes) {
+            Location attackerLoc = mapObjectLocation.get(attacker);
+            // Painting the bullet on the map.
+            TravelingObj bullet = new TravelingObj();
+            Location bulletLoc = new Location(attackerLoc);
+            bulletLoc.TravelTo(target);
+            mapObjectLocation.put(bullet,bulletLoc);
+            PrintMap();
+            while(!bulletLoc.TravelTo(target)) {
+                for (Location loc : mapObjectLocation.values()) {
+                    if (loc.equals(bulletLoc) && !loc.equals(target)) {
+                        return false; // If there is an object between two location then the target cannot be attacked.
+                    }
+                }
+                PrintMap();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                }
+            }
+
+            mapObjectLocation.remove(bullet);
+		    for (final Hero hero: heroes) {
 				if(hero == attacker)
 					continue;
-				Location attackerLoc = mapObjectLocation.get(attacker);
 				Location heroLoc = mapObjectLocation.get(hero);
 				if(heroLoc.distanceTo(target) <= attacker.attackSplit) {
-					// Paint the bullet on the map
-
-
-					Bullet bullet = new Bullet();
-					Location bulletLoc = new Location(attackerLoc);
-					bulletLoc.TravelTo(target);
-					mapObjectLocation.put(bullet,bulletLoc);
-					PrintMap();
-					while(bulletLoc.TravelTo(target) != true) {
-						for (Location loc : mapObjectLocation.values()) {
-							if(loc.equals(bulletLoc) && ! loc.equals(target)) {
-								return false; // If there is an object between two location.
-							}
-						}
-						PrintMap();
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException e) {
-
-						}
-
-					}
-
-
-
-
-					mapObjectLocation.remove(bullet);
 					if(hero.beAttacked(attacker.getAttackDamage())) {
 						//Do something if the target dies.
 						mapObjectLocation.remove(hero);
+
 						new Thread(new Runnable() {
 							public void run() {
 								// Define respawn time = level * 2
@@ -219,13 +221,84 @@ public class BattleFieldControl {
 		}
 		return true;
 	}
+    public void heal(Healer healer, Location target) {
+        // Painting the heart on the map.
+        Location healerLoc = mapObjectLocation.get(healer);
+        TravelingObj heart= new TravelingObj("❤");
+        Location heartLoc = new Location(healerLoc);
+        heartLoc.TravelTo(target);
+        mapObjectLocation.put(heart,heartLoc);
+        PrintMap();
+        while(!heartLoc.TravelTo(target)) {
+            PrintMap();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+            }
+        }
+        mapObjectLocation.remove(heart);
+
+        for(final Hero hero : heroes) {
+            Location heroLoc = mapObjectLocation.get(hero);
+            if(heroLoc.distanceTo(target) <= healer.getHealRange()) {
+                healer.heals(hero);
+            }
+        }
+    }
 
 
+    public void PrintMapWithInformation() {
+	    System.out.println("**********Blue Team**********");
+	    for(final Hero hero : heroes) {
+	        if(!hero.Team.equals("Blue"))
+	            continue;
+	        hero.PrintInfo();
+        }
+        System.out.println("**********Red Team**********");
+        for(final Hero hero : heroes) {
+            if(!hero.Team.equals("Red"))
+                continue;
+            hero.PrintInfo();
+        }
+
+	    PrintMap();
+    }
+    public boolean castSpell(Hero caster,Location casterLoc ,Location target) {
+        DrawMovingObj(casterLoc,target,caster.getAbility());
+        for(final Hero hero:heroes) {
+            if(hero.Team.equals(caster.Team)) {
+                continue;
+            }
+            Location heroLoc = mapObjectLocation.get(hero);
+            if(heroLoc.distanceTo(target) > caster.getAbility().getRange()) {
+                continue;
+            }
+            caster.castSpell(hero);
+        }
+        return true;
+    }
+    public void DrawMovingObj(Location start,Location end,MapObject obj) {
+
+	    Location objLoc = new Location(start);
+        objLoc.TravelTo(end);
+        mapObjectLocation.put(obj,objLoc);
+        PrintMap();
+        while(!objLoc.TravelTo(end)) {
+            PrintMap();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+
+            }
+        }
+        mapObjectLocation.remove(obj);
+    }
+    static Hero playingHero;
 	public static void main(String [] args) {
 		BattleFieldControl battleFieldControl = new BattleFieldControl(25,15);
 		battleFieldControl.PrintMap();
 		Scanner in = new Scanner(System.in);
-		Hero playingHero = battleFieldControl.heroes.elementAt(0);
+		playingHero = battleFieldControl.heroes.elementAt(0);
 		while(in.hasNext()) {
 			String command = in.next();
 			if(command.equals("move")) {
@@ -233,7 +306,6 @@ public class BattleFieldControl {
 				char direction = temp.charAt(0);
 				int steps = in.nextInt();
 				battleFieldControl.moveHero(direction, steps);
-
 			}
 			else if(command.equals("attack")) {
 				int xLoc = in.nextInt(), yLoc = in.nextInt();
@@ -241,17 +313,27 @@ public class BattleFieldControl {
 				Location target = new Location(xLoc,yLoc);
 				battleFieldControl.Attacks(playingHero,target);
 			} else if (command.equals("switch")) {
-				if(playingHero == battleFieldControl.heroes.lastElement()) {
-					playingHero = battleFieldControl.heroes.firstElement();
+			    do {
+                    if(playingHero == battleFieldControl.heroes.lastElement()) {
+                        playingHero = battleFieldControl.heroes.firstElement();
 
-				} else {
-					int nextIndex = battleFieldControl.heroes.indexOf(playingHero) + 1;
-					playingHero = battleFieldControl.heroes.elementAt(nextIndex);
-
-				}
+                    } else {
+                        int nextIndex = battleFieldControl.heroes.indexOf(playingHero) + 1;
+                        playingHero = battleFieldControl.heroes.elementAt(nextIndex);
+                    }
+                } while(!battleFieldControl.mapObjectLocation.containsKey(playingHero));
 				System.out.println("Now playing hero is " + playingHero.appearance);
-			}
-			battleFieldControl.PrintMap();
+			} else if(command.equals("heal")) {
+                int xLoc = in.nextInt(), yLoc = in.nextInt();
+                Location target = new Location(xLoc,yLoc);
+                battleFieldControl.heal(((Healer) playingHero),target);
+            } else if(command.equals("cast")) {
+                int xLoc = in.nextInt(), yLoc = in.nextInt();
+                Location target = new Location(xLoc,yLoc);
+                Location nowLoc = battleFieldControl.mapObjectLocation.get(playingHero);
+                battleFieldControl.castSpell(playingHero,nowLoc,target);
+            }
+			battleFieldControl.PrintMapWithInformation();
 		}
 	}
 
