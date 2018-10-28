@@ -4,7 +4,6 @@ import com.jerry.mapObjects.*;
 /**
  * The Map of the game.
  * <br/>
- *
  * @author Jerry
  *
  */
@@ -18,6 +17,10 @@ public class BattleMap {
 				Map[i][j] = BasicEmoji;
 	}
 
+	/**
+	 * Paint the whole map as BasicEmoji.
+	 *
+	 */
 	private void initMap() {
 		for (int i = 0; i < Map.length; i++) {
 			for (int j = 0; j < Map[i].length; j++)
@@ -35,11 +38,13 @@ public class BattleMap {
 		}
 	}
 
+	/**
+	 * Print the Map in console.
+	 */
 	void PrintMap() {
 		for (int i = 0; i < Map.length; i++) {
 			for (int j = 0; j < Map[i].length; j++)
 				System.out.print(Map[i][j]);
-
 			System.out.println();
 		}
 	}

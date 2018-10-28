@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="Maven: org.json:json:bundle:20180813">
+  <library name="Maven: org.json:json:jar-with-dependencies:20180813">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/json/json/20180813/json-20180813.bundle!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/json/json/20180813/json-20180813-jar-with-dependencies.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$MAVEN_REPOSITORY$/org/json/json/20180813/json-20180813-javadoc.jar!/" />

@@ -12,6 +12,10 @@ public class Location {
 		xLoc = x;
 		yLoc = y;
 	}
+	public Location(Location rhs) {
+		xLoc = rhs.xLoc;
+		yLoc = rhs.yLoc;
+	}
 	private void MoveRight() {
 		xLoc++;
 	}
@@ -66,21 +70,21 @@ public class Location {
 	 * @param locations The whole objects of the game.
 	 * @return Indicates whether moving is successful.
 	 */
-	public boolean Move(int direction, HashMap<MapObject, Location> locations) {
+	public boolean Move(char direction, HashMap<MapObject, Location> locations) {
 		switch(direction) {
-			case 0:
+			case 'w':
 				if (! MoveUp(locations) )
 					return false;
 				break;
-			case 1:
+			case 'd':
 				if( ! MoveRight(locations))
 					return false;
 				break;
-			case 2:
+			case 's':
 				if( !MoveDown(locations))
 					return false;
 				break;
-			case 3:
+			case 'a':
 				if( !MoveLeft(locations))
 					return false;
 				break;
@@ -95,6 +99,29 @@ public class Location {
 	 */
 	public double distanceTo(Location rhs) {
 		return Math.sqrt((xLoc - rhs.xLoc) * (xLoc - rhs.xLoc) + (yLoc - rhs.yLoc) * (yLoc - rhs.yLoc));
+	}
+
+
+	public boolean equals(Location rhs) {
+		return xLoc == rhs.xLoc && yLoc == rhs.yLoc;
+	}
+	public boolean TravelTo(Location target) {
+		if(target.yLoc == yLoc && target.xLoc == xLoc) {
+			return true;
+		}
+		if(target.xLoc > xLoc) {
+			xLoc++;
+		}
+		else if(target.xLoc < xLoc) {
+			xLoc--;
+		}
+		if(target.yLoc > yLoc) {
+			yLoc++;
+		}
+		else if(target.yLoc < yLoc) {
+			yLoc--;
+		}
+		return false;
 	}
 
 }
