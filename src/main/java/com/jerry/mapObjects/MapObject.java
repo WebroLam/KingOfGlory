@@ -1,5 +1,9 @@
 package com.jerry.mapObjects;
 
+/**
+ * An object on the map.
+ * @author Jerry
+ */
 public interface MapObject {
 	/**
 	 * Draw the object on given map

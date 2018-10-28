@@ -1,8 +1,10 @@
 package com.jerry.mapObjects;
+import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.math.*;
 /**
  * The location of an object in the map.
+ * @author Jerry
  */
 public class Location {
 	public int xLoc;
@@ -12,7 +14,7 @@ public class Location {
 		xLoc = x;
 		yLoc = y;
 	}
-	public Location(Location rhs) {
+	public Location(@NotNull Location rhs) {
 		xLoc = rhs.xLoc;
 		yLoc = rhs.yLoc;
 	}
@@ -109,8 +111,6 @@ public class Location {
 	public boolean equals(Location rhs) {
 		return xLoc == rhs.xLoc && yLoc == rhs.yLoc;
 	}
-
-
     /**
      * Make current location travel to another, move one step each direction each time.
      * @param target to location to travel to.

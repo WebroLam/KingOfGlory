@@ -28,7 +28,6 @@ public class Hero implements MapObject,CharacterInterface{
 											1000,1200,1400,1500,1600,1600,
 											1600,1600,1600,1600,1600};
     Ability ability;
-
 	public String Team;
 	public Hero() {
 		appearance = "😺";
@@ -71,9 +70,11 @@ public class Hero implements MapObject,CharacterInterface{
 		catch(JSONException e) {
 			System.out.println(e.getMessage());
 		}
-		ability = new Bomb();
+		ability = new KameHameHa();
 	}
-
+    public int getAbilityPower() {
+        return AbilityPower;
+    }
 	/**
 	 * Killing another player gains XP
 	 * @param XP the amount of xp to gain.
@@ -85,12 +86,9 @@ public class Hero implements MapObject,CharacterInterface{
 			levelUp();
 		}
 	}
-
-	public int getAbilityPower() {
-	    return AbilityPower;
-    }
-
-
+    /**
+     * Level Up
+     */
 	protected void levelUp() {
 		level++;
 		currentHealth   += (maxHealth - currentHealth) * 0.5;
@@ -100,23 +98,15 @@ public class Hero implements MapObject,CharacterInterface{
 		maxHealth *= HealthIncreaseSpeed;
 		maxMP *= MPIncreaseSpeed;
 	}
+
 	public void drawOnMap(String [][]Map, Location loc) {
 		Map[loc.yLoc][loc.xLoc] = appearance;
 	}
 
-    /**
-     * Make this hero be attacked by certain damage
-     * @param damage the amount of damage to take.
-     * @return if that damage kills this hero.
-     */
-	public boolean beAttacked(int damage) {
-		currentHealth -= damage;
-		if(currentHealth <= 0) {
-			currentHealth = 0;
-			return true;
-		}
-		return false;
-	}
+
+	public int getCurrentHealth() {
+	    return currentHealth;
+    }
 	// Define ReSpawn time as level * 2.
 	public void ReSpawn() {
 		currentHealth = maxHealth;
@@ -134,6 +124,21 @@ public class Hero implements MapObject,CharacterInterface{
 	    System.out.print(" HP: " + currentHealth + "/" + maxHealth + " MP: " + currentMP + "/" + maxMP);
 	    System.out.println(" Level: " + level + " Exp: " + currentExp);
     }
+
+
+    /**
+     * Make this hero be attacked by certain damage
+     * @param damage the amount of damage to take.
+     * @return if that damage kills this hero.
+     */
+    public boolean beAttacked(int damage) {
+        currentHealth -= damage;
+        if(currentHealth <= 0) {
+            currentHealth = 0;
+            return true;
+        }
+        return false;
+    }
     /**
      * Restore specific amount health to hero.
      * @param amount The amount of health to be restored.
@@ -146,6 +151,7 @@ public class Hero implements MapObject,CharacterInterface{
 	        currentHealth = maxHealth;
         }
     }
+
 
     /**
      * Use this hero's ability on other hero.

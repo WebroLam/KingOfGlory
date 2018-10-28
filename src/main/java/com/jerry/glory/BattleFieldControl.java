@@ -3,8 +3,10 @@ import java.util.*;
 
 import com.jerry.ability.Ability;
 import com.jerry.mapObjects.*;
+import com.jerry.mapObjects.heroes.Bomber;
 import com.jerry.mapObjects.heroes.Healer;
 import com.jerry.mapObjects.heroes.Hero;
+import com.jerry.mapObjects.heroes.SelfHealer;
 import org.json.*;
 import java.io.FileReader;
 import java.io.File;
@@ -34,9 +36,9 @@ public class BattleFieldControl {
 		playingPlayerIndex = 0;
 		SpawnPointTeamRed = new Location[10];
 		SpawnPointTeamBlue = new Location[10];
+		initSpawnLocation();
 		addHero();
 		addObjects();
-
 	}
 
 	/**
@@ -63,6 +65,42 @@ public class BattleFieldControl {
 		String jsonString = new String(temp);
 		return jsonString;
 	}
+    private void SpawnHero(Hero hero) {
+	    Location[] SpawnPoints;
+	    if(hero.Team.equals("Red")) {
+            SpawnPoints = SpawnPointTeamRed;
+        }
+        else {
+            SpawnPoints = SpawnPointTeamBlue;
+        }
+        boolean foundSame = false;
+        for(int i = 0;i < SpawnPoints.length;i++) {
+            foundSame = false;
+            for (Location loc : mapObjectLocation.values()) {
+                if(loc.equals(SpawnPoints[i])) {
+                    foundSame = true;
+                    break;
+                }
+            }
+            if(foundSame)
+                continue;
+          Location foundLoc = new Location(SpawnPoints[i]);
+          mapObjectLocation.put(hero,foundLoc);
+        }
+    }
+    private void initSpawnLocation() {
+	    int indexForBlue = 0;
+        for(int i = 1;i <= 2;i++) {
+            for(int j = 1;j<=5;j++) {
+                SpawnPointTeamBlue[indexForBlue++] = new Location(i,j);
+            }
+        }
+        int indexForRed = 0;
+        for(int i = 22;i <= 23;i++) {
+            for(int j = 9;j<=13;j++)
+                SpawnPointTeamRed[indexForRed++] = new Location(i,j);
+        }
+    }
 
 	/**
 	 * Add Hero to the Game.
@@ -76,30 +114,28 @@ public class BattleFieldControl {
 //		for(int i = 0;i < heroSize;i++) {
 //			heroes.insertElementAt(new Hero(), i);
 //		}
-
 		try{
 		    JSONObject jsonObject = new JSONObject(readJSONStringFromFile("Heroes.json"));
 		    JSONArray heroJSON = jsonObject.getJSONArray("Heroes");
-		    for(int i = 0;i < heroJSON.length() - 1;i++) {
-		    	heroes.insertElementAt(new Hero(heroJSON.getJSONObject(i)),0);
-		    }
-		    heroes.insertElementAt(new Healer(heroJSON.getJSONObject(heroJSON.length() - 1)),0);
-
+		    int index = 0;
+		    for(;index < 3;index++) {
+		    	heroes.insertElementAt(new Hero(heroJSON.getJSONObject(index)),0);
+		    } // 3 normal Hero
+            heroes.insertElementAt(new Healer(heroJSON.getJSONObject(index++)),0);
+		    heroes.insertElementAt(new SelfHealer(heroJSON.getJSONObject(index++)) , 0);
+            for(;index < 8;index++) {
+                heroes.insertElementAt(new Hero(heroJSON.getJSONObject(index)),0);
+            }
+            heroes.insertElementAt(new Healer(heroJSON.getJSONObject(index++)),0);
+            heroes.insertElementAt(new Bomber(heroJSON.getJSONObject(index++)) , 0);
 
 		} catch (JSONException e) {
 			System.out.println(e.toString());
 		}
+        for(Hero hero : heroes) {
+            SpawnHero(hero);
+        }
 
-
-		for (int i = 0; i <= heroes.size() / 2; i++) {
-			// #Locations: 1,1 3,1
-			mapObjectLocation.put(heroes.elementAt(i), new Location(i * 2 + 1, i + 1));
-
-		}
-
-		for(int i = heroes.size() / 2 + 1;i < heroes.size();i++) {
-			mapObjectLocation.put(heroes.elementAt(i), new Location(i * 2 + 2,i * 2));
-		}
 	}
 
 
@@ -116,9 +152,9 @@ public class BattleFieldControl {
 			mapObjectLocation.put(new MapBoundaries(),new com.jerry.mapObjects.Location(i,ScreenHeight - 1));
 		} // Adding objects for the constraint of the map.
 
-		// TODO: Add spawn area
-
-
+        for(int i = 7,j = 11, count = 0;count <= 8;count++) {
+            mapObjectLocation.put(new MapBoundaries(), new Location(i++,j--));
+        }
 //		for(int j =0;j < ScreenHeight;j++) {
 //			mapObjectLocation.put(new MapBoundaries(Integer.toString(j)),new Location(0 + 1,j));
 //			mapObjectLocation.put(new MapBoundaries(Integer.toString(j)),new Location(ScreenWidth - 2,j));
@@ -149,7 +185,7 @@ public class BattleFieldControl {
 
 	/**
 	 * Move a hero, step by step. Stops if meet an obstacle.
-	 * @param direction 1 for upward, 2 for right.
+	 * @param direction w for upward, d for right.
 	 * @param steps how many steps to move.
 	 * @return If the Hero moved expected num of steps.
 	 */
@@ -186,7 +222,6 @@ public class BattleFieldControl {
                 } catch (InterruptedException e) {
                 }
             }
-
             mapObjectLocation.remove(bullet);
 		    for (final Hero hero: heroes) {
 				if(hero == attacker)
@@ -205,8 +240,7 @@ public class BattleFieldControl {
 								} catch (InterruptedException e) {
 									System.out.println("");
 								}
-								//TODO: Determine where to spawn this hero
-								mapObjectLocation.put(hero,new Location(1, 1));
+							    SpawnHero(hero);
 								hero.ReSpawn();
 								PrintMap();
 							}
@@ -263,6 +297,7 @@ public class BattleFieldControl {
 
 	    PrintMap();
     }
+
     public boolean castSpell(Hero caster,Location casterLoc ,Location target) {
         DrawMovingObj(casterLoc,target,caster.getAbility());
         for(final Hero hero:heroes) {
@@ -273,12 +308,28 @@ public class BattleFieldControl {
             if(heroLoc.distanceTo(target) > caster.getAbility().getRange()) {
                 continue;
             }
-            caster.castSpell(hero);
+            if(caster.castSpell(hero)) {
+                mapObjectLocation.remove(hero);
+
+                new Thread(new Runnable() {
+                    public void run() {
+                        // Define respawn time = level * 2
+                        try {
+                            Thread.sleep(hero.getLevel() * 2 * 1000);
+                        } catch (InterruptedException e) {
+                        }
+                        SpawnHero(hero);
+                        hero.ReSpawn();
+                        PrintMap();
+                    }
+                }).start();
+                System.out.println(hero.appearance + " got attack and died");
+
+            }
         }
         return true;
     }
     public void DrawMovingObj(Location start,Location end,MapObject obj) {
-
 	    Location objLoc = new Location(start);
         objLoc.TravelTo(end);
         mapObjectLocation.put(obj,objLoc);

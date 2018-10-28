@@ -1,16 +1,14 @@
 package com.jerry.ability;
-import com.jerry.mapObjects.*;
+
+import com.jerry.mapObjects.Location;
 import com.jerry.mapObjects.heroes.Hero;
 
-/**
- * Ability of throwing an explosive bomb.
- */
-public class Bomb implements Ability {
-    public Bomb() {
+public class KameHameHa implements Ability{
+    public KameHameHa() {
         coolDownTime = 8;
-        MPCost = 100;
+        MPCost = 10;
         inCoolDown = false;
-        range = 5;
+        range = 1;
     }
     public double getRange() {
         return range;
@@ -19,7 +17,7 @@ public class Bomb implements Ability {
     int coolDownTime;
     int MPCost;
     boolean inCoolDown;
-    String appearance = "💣";
+    String appearance = "💦";
     public void drawOnMap(String [][] Map, Location loc) {
         Map[loc.yLoc][loc.xLoc] = appearance;
     }
@@ -49,5 +47,5 @@ public class Bomb implements Ability {
         }).start();
         inCoolDown = false;
     }
-
 }
+

@@ -11,21 +11,20 @@ public class AutoGenerateHealth implements PassiveAbility {
         AbilityOwner = abilityOwner;
     }
     public void StartAbility() {
-        if(AbilityThread.isAlive()) {
-            AbilityThread.destroy();
-        }
         AbilityThread = new Thread(new Runnable() {
             public void run() {
-                try {
-                    Thread.sleep(1000) ; // Every 1 second
-                } catch (InterruptedException e) {
+                while(true) {
+                    try {
+                        Thread.sleep(1000) ; // Every 1 second
+                    } catch (InterruptedException e) {
+
+                    }
+                    AbilityOwner.restoreHealth(HealPerSec);
 
                 }
-                AbilityOwner.restoreHealth(AbilityOwner.getAbilityPower());
             }
         });
 
         AbilityThread.start();
     }
-
 }
