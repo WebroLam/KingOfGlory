@@ -3,6 +3,10 @@ package com.jerry.ability;
 import com.jerry.mapObjects.Location;
 import com.jerry.mapObjects.heroes.Hero;
 
+/**
+ * KameHameHa :龟太气功。
+ * @author Jerry
+ */
 public class KameHameHa implements Ability{
     public KameHameHa() {
         coolDownTime = 8;
