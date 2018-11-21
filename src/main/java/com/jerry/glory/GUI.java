@@ -210,8 +210,19 @@ public class GUI extends JPanel {
     // Mouse event button 1 for main, 3 for sub
     class MouseLis implements MouseListener {
         public void mouseClicked(MouseEvent event) {
+            Location target = new Location(event.getX() / imageSizeX , event.getY()/imageSizeY);
+            if(mapObjectLocation.containsValue(target)) {
+                for(Hero hero : heroes) {
+                    if(mapObjectLocation.get(hero) == target) {
+                        player.attack(hero);
+                    }
+                }
+
+            }
+            else {
             player.moveTo(new Location(event.getX()/imageSizeX,event.getY()/imageSizeY));
-            text.append("Got :" + event.getX()/imageSizeX+" and " + event.getY()/imageSizeY + "\n");
+            text.append("Got :" + event.getX()/imageSizeX+" and " + event.getY()/imageSizeY + "\n"); }
+
         }
         public void mousePressed(MouseEvent event) {
 

@@ -19,6 +19,7 @@ import java.io.IOException;
 import org.apache.logging.log4j.*;
 import org.apache.logging.log4j.*;
 public class Hero implements MapObject,CharacterInterface{
+	private static Logger logger = LogManager.getLogger();
     private final static String ImageFilePath = "src/main/resources/images/";
     protected double attackDistance;
 	protected int attackDamage;
@@ -127,7 +128,7 @@ public class Hero implements MapObject,CharacterInterface{
 	 */
 	public void draw(Graphics g, Location loc) {
 	    if(image == null) {
-	        System.out.println("fk");
+	    	logger.error("no image found");
         }
 
         try {
