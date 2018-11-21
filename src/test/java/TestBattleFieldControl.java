@@ -20,6 +20,13 @@ public class TestBattleFieldControl {
 	}
 
 	@Test
+	public void testGetAttacked() {
+    	Hero hero1 = new Hero();
+    	int original = 100;
+    	int damage = 10;
+		Assertions.assertEquals(original - damage, 90);
+	}
+	@Test
     @DisplayName("Testing hero get damaged")
 	public void testGetDamaged() {
     	init();

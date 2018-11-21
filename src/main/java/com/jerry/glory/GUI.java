@@ -147,7 +147,8 @@ public class GUI extends JPanel {
             }
 
             for(;index < 10;index++) {
-                heroes.insertElementAt(new automatic(heroJSON.getJSONObject(index),this),heroes.size());
+//                heroes.insertElementAt(new automatic(heroJSON.getJSONObject(index),this),heroes.size());
+                heroes.insertElementAt(new autoProtecter(heroJSON.getJSONObject(index),this),heroes.size());
             }
 
         } catch (JSONException e) {
