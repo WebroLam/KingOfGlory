@@ -9,6 +9,7 @@ import java.math.*;
 public class Location {
 	public int xLoc;
 	public int yLoc;
+	boolean wenup = false;
 
 	public Location(int x, int y) {
 		xLoc = x;
@@ -30,7 +31,7 @@ public class Location {
 	private void MoveDown() {
 		yLoc++;
 	}
-	private boolean MoveRight(HashMap<MapObject, Location> locations) {
+	private boolean MoveRight(@NotNull HashMap<MapObject, Location> locations) {
 		for(Location loc : locations.values()) {
 			if(xLoc + 1 == loc.xLoc && yLoc == loc.yLoc)
 				return false;
@@ -47,7 +48,7 @@ public class Location {
 		xLoc--;
 		return true;
 	}
-	private boolean MoveUp(HashMap<MapObject, Location> locations) {
+	private boolean MoveUp(@NotNull HashMap<MapObject, Location> locations) {
 		for(Location loc : locations.values()) {
 			if(yLoc - 1 == loc.yLoc && xLoc == loc.xLoc) {
 				return false;
@@ -56,7 +57,7 @@ public class Location {
 		yLoc--;
 		return true;
 	}
-	private boolean MoveDown(HashMap<MapObject, Location> locations) {
+	private boolean MoveDown(@NotNull HashMap<MapObject, Location> locations) {
 		for(Location loc : locations.values()) {
 			if(yLoc + 1 == loc.yLoc && xLoc == loc.xLoc) {
 				return false;
@@ -120,18 +121,25 @@ public class Location {
 		if(target.yLoc == yLoc && target.xLoc == xLoc) {
 			return true;
 		}
-		if(target.xLoc > xLoc) {
-			xLoc++;
+		if(wenup) {
+			if(target.xLoc > xLoc) {
+				xLoc++;
+			}
+			else if(target.xLoc < xLoc) {
+				xLoc--;
+			}
+			wenup = false;
 		}
-		else if(target.xLoc < xLoc) {
-			xLoc--;
-		}
-		if(target.yLoc > yLoc) {
-			yLoc++;
-		}
+		else {
+			if(target.yLoc > yLoc) {
+				yLoc++;
+			}
 		else if(target.yLoc < yLoc) {
-			yLoc--;
+				yLoc--;
+			}
+			wenup = true;
 		}
+
 		return false;
 	}
 

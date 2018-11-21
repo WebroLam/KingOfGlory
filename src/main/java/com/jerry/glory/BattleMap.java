@@ -31,7 +31,7 @@ public class BattleMap {
 	 * Draw all the map objects on the map.
 	 * @param objects HashMap of all the MapObject.
 	 */
-	void DrawObjects(HashMap<MapObject, Location> objects) {
+	public void DrawObjects(HashMap<MapObject, Location> objects) {
 		initMap();
 		for(MapObject key : objects.keySet()) {
 			key.drawOnMap(Map,objects.get(key));
@@ -47,6 +47,21 @@ public class BattleMap {
 				System.out.print(Map[i][j]);
 			System.out.println();
 		}
+	}
+
+	/**
+	 * Generates the String of the map.
+	 * @return
+	 */
+	public String generateMap() {
+		String result = new String();
+		for(int i = 0;i < Map.length;i++) {
+			for(int j = 0;j < Map[i].length;j++) {
+				result += Map[i][j];
+			}
+			result += "\n";
+		}
+		return result;
 	}
 
 }

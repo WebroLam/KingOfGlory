@@ -1,25 +1,32 @@
 import com.jerry.mapObjects.heroes.Hero;
 import org.junit.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.util.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 
 public class TestBattleFieldControl {
 
 
     Hero hero1,hero2;
+    private static final Logger logger = LogManager.getLogger(TestBattleFieldControl.class);
+    public static final String ResourceFilePath = "src/main/resources";
 
-	@BeforeAll
+    @BeforeEach
     public void init() {
-
+        hero1 = new Hero();
 	}
 
-
-
 	@Test
+    @DisplayName("Testing hero get damaged")
 	public void testGetDamaged() {
-	    hero1 = new Hero();
-        int beforeHealth = hero1.getCurrentHealth();
-        hero1.beAttacked(10);
-        Assert.assertEquals(beforeHealth - 10,hero1.getCurrentHealth());
+    	init();
+        int damageTotake = (int)(Math.random() * 100);
+    	int initialHealth = hero1.getCurrentHealth();
+    	hero1.beAttacked(damageTotake);
+        Assertions.assertEquals(initialHealth-damageTotake,hero1.getCurrentHealth());
 	}
 
 	@Test
@@ -34,7 +41,12 @@ public class TestBattleFieldControl {
 
 	@Test
 	public void TestHeroDieAndReSpawn() {
-
+        init();
+        int fullHealth = hero1.getCurrentHealth();
+        hero1.beAttacked(hero1.getCurrentHealth());
+        Assertions.assertEquals(0,hero1.getCurrentHealth());
+        hero1.ReSpawn();
+        Assertions.assertEquals(fullHealth,hero1.getCurrentHealth());
 	}
 
 }

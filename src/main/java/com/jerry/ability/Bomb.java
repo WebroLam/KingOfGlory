@@ -2,6 +2,9 @@ package com.jerry.ability;
 import com.jerry.mapObjects.*;
 import com.jerry.mapObjects.heroes.Hero;
 
+import javax.swing.*;
+import java.awt.*;
+
 /**
  * Ability of throwing an explosive bomb.
  */
@@ -49,5 +52,12 @@ public class Bomb implements Ability {
         }).start();
         inCoolDown = false;
     }
+
+    //TODO: implement draw
+    public void draw(Graphics g,Location loc) {
+//        g.drawImage()
+        // TODO: find it's image.
+    }
+
 
 }

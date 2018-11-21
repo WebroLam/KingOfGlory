@@ -1,23 +1,25 @@
 package com.jerry.glory;
 import java.util.*;
 
-import com.jerry.ability.Ability;
 import com.jerry.mapObjects.*;
 import com.jerry.mapObjects.heroes.Bomber;
 import com.jerry.mapObjects.heroes.Healer;
 import com.jerry.mapObjects.heroes.Hero;
 import com.jerry.mapObjects.heroes.SelfHealer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.json.*;
-import java.io.FileReader;
+
 import java.io.File;
-
-
+import com.jerry.jsonHandle;
 /**
  * The battle field of the game.
  * The Controller of the whole program
  * @author Jerry
  */
 public class BattleFieldControl {
+    private static final Logger logger = LogManager.getLogger(BattleFieldControl.class);
 	private int ScreenWidth;
 	private int ScreenHeight;
 	private int playingPlayerIndex;
@@ -27,6 +29,7 @@ public class BattleFieldControl {
 	private final static String ResourcesFilePath = "src/main/resources/";
 	private Location[] SpawnPointTeamRed;
 	private Location[] SpawnPointTeamBlue;
+    private Thread printMap;
 	public BattleFieldControl(int width, int height) {
 		ScreenWidth = width;
 		ScreenHeight = height;
@@ -39,33 +42,50 @@ public class BattleFieldControl {
 		initSpawnLocation();
 		addHero();
 		addObjects();
+		initTreads();
 	}
+    private void initTreads() {
+	    printMap = new Thread(
+                new Runnable() {
+                    public void run() {
+                        while(true) {
+                            try {
+                                PrintMapWithInformation();
 
-	/**
-	 * To take a json file into a String
-	 * @param fileName the name of the file. The file shall be in resources folder.
-	 * @return Casted String of the file.
-	 */
-	private static String readJSONStringFromFile(final String fileName) {
-		FileReader fr;
-		File file = new File(ResourcesFilePath + fileName);
-		try {
-			fr = new FileReader(file);
-		} catch(java.io.FileNotFoundException e) {
-			System.out.println("Fuck, " + e.getMessage());
-			return "";
-		}
-		char [] temp = new char[9000000];
-		try {
-			fr.read(temp);
-		} catch(java.io.IOException e) {
-			System.out.println("Fuck, " + e.getMessage());
-			return "";
-		}
-		String jsonString = new String(temp);
-		return jsonString;
-	}
-    private void SpawnHero(Hero hero) {
+                                Thread.sleep(40); //FPS 25
+                            } catch (InterruptedException e) {
+                                logger.error("Interrupted PrintMap " + e.getMessage());
+                            }
+                        }
+                    }
+                }
+        );
+	    for(final Hero hero:heroes) {
+	        Thread t = new Thread(new Runnable() {
+                public void run() {
+                    final File commands = new java.io.File(ResourcesFilePath + "commands");
+                    Scanner in = null;
+                    try {
+                        in = new Scanner(commands);
+                    } catch (java.io.FileNotFoundException e) {
+                        logger.error("Error reading file");
+                        System.exit(-1);
+                    }
+                    performOp(in,hero);
+                }
+            });
+	        t.setPriority(1);
+	        t.start();
+        }
+        printMap.setPriority(10);
+        printMap.start();
+
+    }
+
+
+
+
+    public void SpawnHero(@NotNull Hero hero) {
 	    Location[] SpawnPoints;
 	    if(hero.Team.equals("Red")) {
             SpawnPoints = SpawnPointTeamRed;
@@ -88,7 +108,11 @@ public class BattleFieldControl {
           mapObjectLocation.put(hero,foundLoc);
         }
     }
-    private void initSpawnLocation() {
+
+	/**
+	 * TODO: Code needs to be changed based on changing the spawn location
+	 */
+	private void initSpawnLocation() {
 	    int indexForBlue = 0;
         for(int i = 1;i <= 2;i++) {
             for(int j = 1;j<=5;j++) {
@@ -100,6 +124,8 @@ public class BattleFieldControl {
             for(int j = 9;j<=13;j++)
                 SpawnPointTeamRed[indexForRed++] = new Location(i,j);
         }
+
+
     }
 
 	/**
@@ -107,15 +133,8 @@ public class BattleFieldControl {
 	 */
 	private void addHero() {
 		final int heroSize = 10;
-//		heroes.insertElementAt(new Hero(),0);
-//		heroes.insertElementAt(new Hero(),1);
-//		heroes.insertElementAt(new Hero(), 2);
-//		heroes.insertElementAt(new Hero(), 3);
-//		for(int i = 0;i < heroSize;i++) {
-//			heroes.insertElementAt(new Hero(), i);
-//		}
 		try{
-		    JSONObject jsonObject = new JSONObject(readJSONStringFromFile("Heroes.json"));
+		    JSONObject jsonObject = new JSONObject(jsonHandle.readJSONStringFromFile("Heroes.json"));
 		    JSONArray heroJSON = jsonObject.getJSONArray("Heroes");
 		    int index = 0;
 		    for(;index < 3;index++) {
@@ -155,14 +174,7 @@ public class BattleFieldControl {
         for(int i = 7,j = 11, count = 0;count <= 8;count++) {
             mapObjectLocation.put(new MapBoundaries(), new Location(i++,j--));
         }
-//		for(int j =0;j < ScreenHeight;j++) {
-//			mapObjectLocation.put(new MapBoundaries(Integer.toString(j)),new Location(0 + 1,j));
-//			mapObjectLocation.put(new MapBoundaries(Integer.toString(j)),new Location(ScreenWidth - 2,j));
-//		}
-//		for(int i = 0;i < ScreenWidth;i++) {
-//			mapObjectLocation.put(new MapBoundaries(Integer.toString(i)),new Location(i,1));
-//			mapObjectLocation.put(new MapBoundaries(Integer.toString(i)),new Location(i,ScreenHeight - 2));
-//		}
+
 
 		//TODO: Find the object locations.
 		final int objLocations[] = {};
@@ -178,11 +190,10 @@ public class BattleFieldControl {
 		Map.PrintMap();
 	}
 
-
-//		for(int i = 0;i < heroes.size();i++) {
-//			printAppearanceOnMap(heroes.elementAt(i).appearance,2,3);
-//		}
-
+	public String GenerateMapString() {
+		Map.DrawObjects(mapObjectLocation);
+		return Map.generateMap();
+	}
 	/**
 	 * Move a hero, step by step. Stops if meet an obstacle.
 	 * @param direction w for upward, d for right.
@@ -190,12 +201,22 @@ public class BattleFieldControl {
 	 * @return If the Hero moved expected num of steps.
 	 */
 	public boolean moveHero(final char direction, int steps) {
-		Location movingLocation = mapObjectLocation.get(playingHero);
+		Location movingLocation = mapObjectLocation.get(playingHero); //TODO: ERROR!: shouldn't use playing hero here.
 		while(steps -- != 0 && movingLocation.Move(direction, mapObjectLocation));
-		if(steps != 0)
-			return false;
-		return true;
-	}
+        return steps == 0;
+    }
+    /**
+     * Move a hero, step by step. Stops if meet an obstacle.
+     * @param direction w for upward, d for right.
+     * @param steps how many steps to move.
+     * @param hero who
+     * @return If the Hero moved expected num of steps.
+     */
+    public boolean moveHero(final char direction, int steps,Hero hero) {
+        Location movingLocation = mapObjectLocation.get(hero);
+        while(steps -- != 0 && movingLocation.Move(direction, mapObjectLocation));
+        return steps == 0;
+    }
 
 	public boolean Attacks(Hero attacker, Location target ){
 		if(mapObjectLocation.get(attacker).distanceTo(target) > attacker.getAttackDistance()) {
@@ -234,11 +255,10 @@ public class BattleFieldControl {
 
 						new Thread(new Runnable() {
 							public void run() {
-								// Define respawn time = level * 2
 								try {
 									Thread.sleep(hero.getLevel() * 2 * 1000);
 								} catch (InterruptedException e) {
-									System.out.println("");
+									System.out.println();
 								}
 							    SpawnHero(hero);
 								hero.ReSpawn();
@@ -284,18 +304,38 @@ public class BattleFieldControl {
     public void PrintMapWithInformation() {
 	    System.out.println("**********Blue Team**********");
 	    for(final Hero hero : heroes) {
+	        Location loc = mapObjectLocation.get(hero);
 	        if(!hero.Team.equals("Blue"))
 	            continue;
 	        hero.PrintInfo();
+//	        System.out.println("x y =" + loc.xLoc + " " + loc.yLoc);
         }
         System.out.println("**********Red Team**********");
         for(final Hero hero : heroes) {
+            Location loc = mapObjectLocation.get(hero);
             if(!hero.Team.equals("Red"))
                 continue;
             hero.PrintInfo();
+//            System.out.println("x y =" + loc.xLoc + " " + loc.yLoc);
         }
-
 	    PrintMap();
+    }
+
+    public String GenerateMapWithInformation() {
+		String result = new String();
+		result += "**********Blue Team**********" + "\n";
+	    for(final Hero hero : heroes) {
+		    if(!hero.Team.equals("Blue"))
+			    continue;
+		    result += hero.generateInfo();
+	    }
+	    result += "**********Red Team**********" + "\n";
+	    for(final Hero hero : heroes) {
+		    if(!hero.Team.equals("Red"))
+			    continue;
+		    result += hero.generateInfo();
+	    }
+	    return result;
     }
 
     public boolean castSpell(Hero caster,Location casterLoc ,Location target) {
@@ -310,21 +350,8 @@ public class BattleFieldControl {
             }
             if(caster.castSpell(hero)) {
                 mapObjectLocation.remove(hero);
-
-                new Thread(new Runnable() {
-                    public void run() {
-                        // Define respawn time = level * 2
-                        try {
-                            Thread.sleep(hero.getLevel() * 2 * 1000);
-                        } catch (InterruptedException e) {
-                        }
-                        SpawnHero(hero);
-                        hero.ReSpawn();
-                        PrintMap();
-                    }
-                }).start();
+                hero.OnDeath(this);
                 System.out.println(hero.appearance + " got attack and died");
-
             }
         }
         return true;
@@ -344,12 +371,22 @@ public class BattleFieldControl {
         }
         mapObjectLocation.remove(obj);
     }
-    static Hero playingHero;
-	public static void main(String [] args) {
-		BattleFieldControl battleFieldControl = new BattleFieldControl(25,15);
-		battleFieldControl.PrintMap();
-		Scanner in = new Scanner(System.in);
-		playingHero = battleFieldControl.heroes.elementAt(0);
+
+    Hero nextHero() {
+        do {
+            if(playingHero == battleFieldControl.heroes.lastElement()) {
+                playingHero = battleFieldControl.heroes.firstElement();
+
+            } else {
+                int nextIndex = battleFieldControl.heroes.indexOf(playingHero) + 1;
+                playingHero = battleFieldControl.heroes.elementAt(nextIndex);
+            }
+        } while(!battleFieldControl.mapObjectLocation.containsKey(playingHero));
+        return playingHero;
+    }
+
+    static void performOp(@NotNull Scanner in) {
+	    playingHero = battleFieldControl.nextHero();
 		while(in.hasNext()) {
 			String command = in.next();
 			if(command.equals("move")) {
@@ -364,28 +401,66 @@ public class BattleFieldControl {
 				Location target = new Location(xLoc,yLoc);
 				battleFieldControl.Attacks(playingHero,target);
 			} else if (command.equals("switch")) {
-			    do {
-                    if(playingHero == battleFieldControl.heroes.lastElement()) {
-                        playingHero = battleFieldControl.heroes.firstElement();
-
-                    } else {
-                        int nextIndex = battleFieldControl.heroes.indexOf(playingHero) + 1;
-                        playingHero = battleFieldControl.heroes.elementAt(nextIndex);
-                    }
-                } while(!battleFieldControl.mapObjectLocation.containsKey(playingHero));
+			    playingHero = battleFieldControl.nextHero();
 				System.out.println("Now playing hero is " + playingHero.appearance);
 			} else if(command.equals("heal")) {
+				int xLoc = in.nextInt(), yLoc = in.nextInt();
+				Location target = new Location(xLoc,yLoc);
+				battleFieldControl.heal(((Healer) playingHero),target);
+			} else if(command.equals("cast")) {
+				int xLoc = in.nextInt(), yLoc = in.nextInt();
+				Location target = new Location(xLoc,yLoc);
+				Location nowLoc = battleFieldControl.mapObjectLocation.get(playingHero);
+				battleFieldControl.castSpell(playingHero,nowLoc,target);
+			}
+
+		}
+	}
+
+    void performOp(@NotNull Scanner in,Hero hero) {
+        while(in.hasNext()) {
+            if(!mapObjectLocation.containsKey(hero)) {
+                continue;
+            }
+            String command = in.next();
+            if(command.equals("move")) {
+                String temp = in.next();
+                char direction = temp.charAt(0);
+                int steps = in.nextInt();
+                this.moveHero(direction, steps,hero);
+            }
+            else if(command.equals("attack")) {
                 int xLoc = in.nextInt(), yLoc = in.nextInt();
                 Location target = new Location(xLoc,yLoc);
-                battleFieldControl.heal(((Healer) playingHero),target);
+                this.Attacks(hero,target);
+            } else if (command.equals("switch")) {
+                hero = this.nextHero();
+                System.out.println("Now playing hero is " + hero.appearance);
+            } else if(command.equals("heal")) {
+                int xLoc = in.nextInt(), yLoc = in.nextInt();
+                Location target = new Location(xLoc,yLoc);
+                this.heal(((Healer) hero),target);
             } else if(command.equals("cast")) {
                 int xLoc = in.nextInt(), yLoc = in.nextInt();
                 Location target = new Location(xLoc,yLoc);
-                Location nowLoc = battleFieldControl.mapObjectLocation.get(playingHero);
-                battleFieldControl.castSpell(playingHero,nowLoc,target);
+                Location nowLoc = this.mapObjectLocation.get(hero);
+                this.castSpell(hero,nowLoc,target);
             }
-			battleFieldControl.PrintMapWithInformation();
-		}
+            //Slower the process.
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+
+            }
+        }
+    }
+
+
+	static BattleFieldControl battleFieldControl = new BattleFieldControl(25,15);
+    static Hero playingHero;
+	public static void main(String [] args) {
+        BattleFieldControl battleFieldControl = new BattleFieldControl(25,15);
+		playingHero = battleFieldControl.heroes.elementAt(0);
 	}
 
 }

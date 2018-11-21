@@ -3,6 +3,9 @@ package com.jerry.ability;
 import com.jerry.mapObjects.Location;
 import com.jerry.mapObjects.heroes.Hero;
 
+import javax.swing.*;
+import java.awt.*;
+
 /**
  * KameHameHa :龟太气功。
  * @author Jerry
@@ -50,6 +53,11 @@ public class KameHameHa implements Ability{
             }
         }).start();
         inCoolDown = false;
+    }
+
+    // TODO: implement this
+    public void draw(Graphics g,Location loc) {
+
     }
 }
 

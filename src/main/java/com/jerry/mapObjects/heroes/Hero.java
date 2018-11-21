@@ -1,13 +1,28 @@
 package com.jerry.mapObjects.heroes;
 
+import com.jerry.glory.BattleFieldControl;
+import com.jerry.glory.GUI;
 import com.jerry.mapObjects.Location;
 import com.jerry.mapObjects.MapObject;
 import com.jerry.ability.*;
+import org.jetbrains.annotations.NotNull;
 import org.json.*;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
+import java.io.File;
+import java.io.IOException;
+import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.*;
 
 public class Hero implements MapObject,CharacterInterface{
-	protected double attackDistance;
+
+    private final static String ImageFilePath = "src/main/resources/images/";
+    protected double attackDistance;
 	protected int attackDamage;
 	protected double attackDamageIncreaseSpeed;
 	protected int AbilityPower;
@@ -22,19 +37,23 @@ public class Hero implements MapObject,CharacterInterface{
 	protected int currentExp;
 	public double attackSplit;
 	public String appearance;
+	public BufferedImage image;
+	public JLabel label;
 	public String name;
 	private final static int MAXLEVEL = 18;
 	private final static int []EXPNeedForLevelingUp = {100,200,300,400,600,700,
 											1000,1200,1400,1500,1600,1600,
 											1600,1600,1600,1600,1600};
     Ability ability;
+    GUI game = null;
 	public String Team;
 	public Hero() {
+	    maxHealth = 500;
+	    currentHealth = maxHealth;
 		appearance = "😺";
 		level = 1;
 		currentExp = 0;
 	}
-
     public Ability getAbility() {
         return ability;
     }
@@ -47,8 +66,16 @@ public class Hero implements MapObject,CharacterInterface{
 	public int getLevel() {
 		return level;
 	}
+	public String getTeam() {
+	    return Team;
+    }
 
-	public Hero(JSONObject jsonObj) {
+    public Hero(JSONObject obj,@NotNull GUI game) {
+	    this(obj);
+	    this.game = game;
+    }
+
+	public Hero(@NotNull JSONObject jsonObj) {
 		try{
 		    appearance = jsonObj.getString("appearance");
 		    level = 1;
@@ -65,14 +92,55 @@ public class Hero implements MapObject,CharacterInterface{
 		    currentMP = maxMP;
 		    MPIncreaseSpeed = jsonObj.getDouble("MPIncreaseSpeed");
 		    Team = jsonObj.getString("Team");
-		    attackSplit = jsonObj.getDouble("attackSplit");}
-
+		    attackSplit = jsonObj.getDouble("attackSplit");
+			String imageName = jsonObj.getString("image");
+			try {
+				File imageFile = new File(ImageFilePath + imageName);
+				image = ImageIO.read(imageFile);
+			} catch (IOException e) {
+				System.out.println("Failed to read image");
+				System.exit(0);
+			}
+		}
 		catch(JSONException e) {
 			System.out.println(e.getMessage());
 		}
+		label =new JLabel(new ImageIcon(image));
 		ability = new KameHameHa();
 	}
-    public int getAbilityPower() {
+
+	public void attack(Hero defender) {
+		if(!game.mapObjectLocation.containsKey(defender)) {
+			return;
+			// Oppsite Hero not in the game.
+		}
+		if(defender.getTeam().equals(this.getTeam())) {
+			return;
+			// Both hero are on the same team
+		}
+
+
+	}
+
+	/**
+	 * Draw this Hero's image on the map.
+	 * @param g the graphics
+	 * @param loc this hero's location
+	 */
+	public void draw(Graphics g, Location loc) {
+	    if(image == null) {
+	        System.out.println("fk");
+        }
+
+        try {
+	        g.drawImage(image,loc.xLoc,loc.yLoc,null);
+        }
+	    catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+	public int getAbilityPower() {
         return AbilityPower;
     }
 	/**
@@ -100,7 +168,12 @@ public class Hero implements MapObject,CharacterInterface{
 	}
 
 	public void drawOnMap(String [][]Map, Location loc) {
-		Map[loc.yLoc][loc.xLoc] = appearance;
+        try{
+            Map[loc.yLoc][loc.xLoc] = appearance;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Array out of bounds! apperance = " + appearance + "index = "+loc.xLoc +" " + loc.yLoc);
+            System.exit(-1);
+        }
 	}
 
 
@@ -123,6 +196,14 @@ public class Hero implements MapObject,CharacterInterface{
 	    System.out.print("Hero: " + appearance);
 	    System.out.print(" HP: " + currentHealth + "/" + maxHealth + " MP: " + currentMP + "/" + maxMP);
 	    System.out.println(" Level: " + level + " Exp: " + currentExp);
+    }
+
+    public String generateInfo() {
+		String result = new String();
+		result += "Hero: " + appearance;
+		result += " HP: " + currentHealth + "/" + maxHealth + " MP: " + currentMP + "/" + maxMP;
+		result += " Level: " + level + " Exp: " + currentExp + "\n";
+		return result;
     }
 
 
@@ -172,9 +253,72 @@ public class Hero implements MapObject,CharacterInterface{
         return killedTarget;
     }
 
+    public void OnDeath(final BattleFieldControl battleFieldControl) {
+        final Hero deadHero = this;
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Thread.sleep(deadHero.getLevel() * 2 * 1000);
+                } catch (InterruptedException e) {
+                }
+                battleFieldControl.SpawnHero(deadHero);
+                deadHero.ReSpawn();
+            }
+        }).start();
+    }
+
+    public boolean moveTo(final Location loc) {
+//        while (!game.mapObjectLocation.get(this).equals(loc)) {
+//            game.mapObjectLocation.get(this).TravelTo(loc);
+//            new Thread(new Runnable() {
+//                public void run() {
+//                    try {
+//                        Thread.sleep(100);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }).start();
+//        }
+        final Location thisLoc = game.mapObjectLocation.get(this);
+        new Thread(new Runnable() {
+            public void run() {
+                synchronized (game.mapObjectLocation) {
+                if(thisLoc == null) {
+                    game.text.append("Trigger NULL\n");
+                    return;
+                }
+
+                while(true) {
+                    Location oldLoc = new Location(thisLoc);
+                    boolean result = thisLoc.TravelTo(loc);
+                    for(Location location : game.mapObjectLocation.values()) {
+                        if(thisLoc != location && thisLoc.xLoc == location.xLoc && thisLoc.yLoc == location.yLoc) {
+                            thisLoc.xLoc = oldLoc.xLoc;
+                            thisLoc.yLoc = oldLoc.yLoc;
+                            return;
+                        }
+                    }
+                    game.text.append("Moved onece\n");
+                    game.text.append("Current Loc: " + thisLoc.xLoc + " " + thisLoc.yLoc + "\n");
+                    if (result == true)
+                        return;
+                    try {
+                        Thread.sleep(10);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            }
+        }).start();
+        game.text.append("Returning false\n");
+        return thisLoc.xLoc == loc.xLoc && thisLoc.yLoc == loc.yLoc;
+    }
 }
 
 interface CharacterInterface {
+
 	void ReSpawn();
 	void Die();
 }

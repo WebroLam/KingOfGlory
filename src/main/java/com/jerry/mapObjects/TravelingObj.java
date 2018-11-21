@@ -1,5 +1,8 @@
 package com.jerry.mapObjects;
 
+import javax.swing.*;
+import java.awt.*;
+
 /**
  * A temporary object on the map that can travel to another location.
  * @author Jerry
@@ -15,5 +18,9 @@ public class TravelingObj implements MapObject {
 	public TravelingObj(String appearance) {
 	    this.appearance = appearance;
     }
+    // TODO: implemnt this
+	public void draw(Graphics g,Location loc) {
+
+	}
 
 }
