@@ -18,9 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import org.apache.logging.log4j.*;
 import org.apache.logging.log4j.*;
-
 public class Hero implements MapObject,CharacterInterface{
-
     private final static String ImageFilePath = "src/main/resources/images/";
     protected double attackDistance;
 	protected int attackDamage;

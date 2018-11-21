@@ -25,7 +25,7 @@ public class autoProtecter extends automatic {
                 logger.debug(name + " attacked " + hero.name);
                 return;
             }
-            if(teammate == null || teammate.getCurrentHealth() > hero.getCurrentHealth()) {
+            if(teammate == null || teammate.attackDamage / teammate.getCurrentHealth() > hero.attackDamage / hero.getCurrentHealth()) {
                 if(hero.getTeam().equals(this.getTeam())) {
                     teammate =  hero; // Find the lowest health teammate, go protect him quq.
                 }
@@ -39,19 +39,12 @@ public class autoProtecter extends automatic {
                 randomTravelCount = 100;
         }
         else {
-            game.text.append("Moving randomly\n");
-            randomTravelCount--;
-            char dirs[] = {
-                    'w',
-                    'a',
-                    's',
-                    'd'
-            };
-            thisLoc.Move(dirs[(int)Math.random()*4],game.mapObjectLocation);
+            randomMove();
         }
 
 
     }
+
     public int beAttack(int value) {
         currentHealth -= value;
         return currentHealth;

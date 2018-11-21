@@ -1,8 +1,6 @@
 package com.jerry.mapObjects.heroes;
-
 import com.jerry.glory.GUI;
 import org.json.JSONObject;
-
 public class autoWarrior extends automatic {
     int attackBuff;
 

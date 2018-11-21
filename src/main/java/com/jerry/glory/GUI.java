@@ -61,14 +61,15 @@ public class GUI extends JPanel {
         infoFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         infoFrame.setVisible(true);
     }
-
-
+    public GUI(Hero hero) {// test only
+        super();
+        mapObjectLocation = new HashMap<MapObject, Location>();
+    }
     public GUI() {
         super();
         MouseLis mouseListener = new MouseLis();
         this.addMouseListener(mouseListener);
         initSpawnLocation();
-
         Thread ViewThread = new Thread(new Runnable() {
             public void run() {
                 while(true) {
@@ -83,7 +84,6 @@ public class GUI extends JPanel {
             });
         ViewThread.setPriority(Thread.MAX_PRIORITY);
         ViewThread.start();
-
         initHero();
         addObjects();
     }

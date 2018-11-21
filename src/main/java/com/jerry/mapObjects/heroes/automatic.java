@@ -62,16 +62,20 @@ public class automatic extends Hero {
                 randomTravelCount = 100;
         }
         else {
-            game.text.append("Moving randomly\n");
-            randomTravelCount--;
-            char dirs[] = {
-                    'w',
-                    'a',
-                    's',
-                    'd'
-            };
-            thisLoc.Move(dirs[(int)Math.random()*4],game.mapObjectLocation);
+            randomMove();
         }
 
+    }
+    public void randomMove() {
+        Location thisLoc = game.mapObjectLocation.get(this);
+        game.text.append("Moving randomly\n");
+        randomTravelCount--;
+        char dirs[] = {
+                'w',
+                'a',
+                's',
+                'd'
+        };
+        thisLoc.Move(dirs[(int)Math.random()*4],game.mapObjectLocation);
     }
 }
