@@ -1,18 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="203bd51d-43f3-4036-bffe-6a1738fd83f3" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/jerry/glory/ViewChooseBackground.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/jerry/glory/ViewChooseHero.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/heroes/temp.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/images/choose.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jerry/glory/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/jerry/glory/GUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/MapBoundaries.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/MapBoundaries.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/heroes/Hero.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/heroes/Hero.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/heroes/autoProtecter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/heroes/autoProtecter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/heroes/automatic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/heroes/automatic.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/Heroes.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Heroes.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/TestBattleFieldControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestBattleFieldControl.java" afterDir="false" />
+    <list default="true" id="203bd51d-43f3-4036-bffe-6a1738fd83f3" name="Default" comment="add keylis">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/commands" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/commands" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -80,7 +71,7 @@
           <entry key="JSON" value="9" />
           <entry key="Kotlin" value="1" />
           <entry key="Log" value="2" />
-          <entry key="PLAIN_TEXT" value="10" />
+          <entry key="PLAIN_TEXT" value="11" />
           <entry key="Properties" value="2" />
           <entry key="XML" value="10" />
         </counts>
@@ -103,7 +94,7 @@
           <entry key="JAVA" value="25387" />
           <entry key="JSON" value="178" />
           <entry key="Kotlin" value="27" />
-          <entry key="PLAIN_TEXT" value="237" />
+          <entry key="PLAIN_TEXT" value="311" />
           <entry key="Properties" value="77" />
           <entry key="XML" value="76" />
         </counts>
@@ -122,8 +113,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/main/java/com/jerry/glory/GUI.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="175">
-                  <caret line="34" selection-start-line="34" selection-end-line="34" />
+                <state relative-caret-position="83">
+                  <caret line="100" column="13" lean-forward="true" selection-start-line="100" selection-start-column="13" selection-end-line="100" selection-end-column="13" />
                   <folding>
                     <element signature="imports" expanded="true" />
                     <element signature="e#1640#1661#0" expanded="true" />
@@ -134,20 +125,20 @@
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/main/java/com/jerry/glory/ViewChooseBackground.java">
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/main/resources/commands">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="120">
-                  <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+                <state relative-caret-position="402">
+                  <caret line="41" column="12" selection-start-line="41" selection-start-column="12" selection-end-line="41" selection-end-column="12" />
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/main/java/com/jerry/glory/BattleMap.java">
+            <entry file="file://$PROJECT_DIR$/src/main/java/com/jerry/glory/ViewChooseBackground.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="345">
-                  <caret line="24" column="16" selection-start-line="24" selection-start-column="16" selection-end-line="24" selection-end-column="16" />
+                <state relative-caret-position="120">
+                  <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
                 </state>
               </provider>
             </entry>
@@ -175,11 +166,11 @@
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/heroes/Hero.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="284">
-                  <caret line="294" column="55" lean-forward="true" selection-start-line="294" selection-start-column="55" selection-end-line="294" selection-end-column="55" />
+                <state relative-caret-position="71">
+                  <caret line="347" column="62" lean-forward="true" selection-start-line="347" selection-start-column="62" selection-end-line="347" selection-end-column="62" />
                   <folding>
                     <element signature="imports" expanded="true" />
                     <element signature="e#4091#4092#0" expanded="true" />
@@ -245,8 +236,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/main/java/com/jerry/glory/ViewChooseHero.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="263">
-                  <caret line="109" column="29" lean-forward="true" selection-start-line="109" selection-start-column="29" selection-end-line="109" selection-end-column="29" />
+                <state relative-caret-position="113">
+                  <caret line="99" lean-forward="true" selection-start-line="99" selection-end-line="99" />
                   <folding>
                     <element signature="imports" expanded="true" />
                     <element signature="e#637#658#0" expanded="true" />
@@ -314,7 +305,6 @@
       <find>append</find>
       <find>static</find>
       <find>text</find>
-      <find>paint</find>
       <find>init</find>
       <find>Run here</find>
       <find>frame</find>
@@ -324,6 +314,7 @@
       <find>key</find>
       <find>initHero</find>
       <find>MoveTo</find>
+      <find>paint</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -382,7 +373,6 @@
         <option value="$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/heroes/autoWarrior.java" />
         <option value="$PROJECT_DIR$/src/test/java/TestBattleFieldControl.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/k.kt" />
-        <option value="$PROJECT_DIR$/src/main/resources/commands" />
         <option value="$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/MapBoundaries.java" />
         <option value="$PROJECT_DIR$/src/main/resources/Heroes.json" />
         <option value="$PROJECT_DIR$/src/main/java/com/jerry/test.java" />
@@ -393,6 +383,7 @@
         <option value="$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/heroes/temp.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/jerry/glory/ViewChooseHero.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/heroes/Hero.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/commands" />
       </list>
     </option>
   </component>
@@ -628,7 +619,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1544024489528" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1544025319812" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/java/com/jerry/glory" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
@@ -660,7 +651,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.ViewChooseHero">
+  <component name="RunManager" selected="Application.GUI">
     <configuration default="true" type="Applet" factoryName="Applet">
       <option name="HEIGHT" value="0" />
       <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
@@ -791,10 +782,10 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.ViewChooseHero" />
-        <item itemvalue="Application.temp" />
         <item itemvalue="Application.GUI" />
         <item itemvalue="Application.test" />
+        <item itemvalue="Application.ViewChooseHero" />
+        <item itemvalue="Application.temp" />
         <item itemvalue="JUnit.TestBattleFieldControl.testGetAttacked" />
       </list>
     </recent_temporary>
@@ -841,7 +832,7 @@
       <workItem from="1543690283819" duration="99000" />
       <workItem from="1543690421575" duration="218000" />
       <workItem from="1543753041661" duration="3000" />
-      <workItem from="1544005071207" duration="11741000" />
+      <workItem from="1544005071207" duration="12412000" />
     </task>
     <task id="LOCAL-00001" summary="Finish showing battle field">
       <created>1539607717900</created>
@@ -1005,7 +996,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="90104000" />
+    <option name="totallyTimeSpent" value="90775000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1020,7 +1011,7 @@
     <frame x="-1280" y="357" width="1280" height="800" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.05654281" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.365105" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -1029,13 +1020,13 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32871288" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.09315068" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.4041096" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4632653" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32959184" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.06938776" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32970297" />
+      <window_info anchor="bottom" id="Terminal" order="8" visible="true" weight="0.32876712" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="10" show_stripe_button="false" />
       <window_info anchor="bottom" id="Messages" order="11" weight="0.32739726" />
@@ -1220,13 +1211,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/commands">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="502">
-          <caret line="44" column="8" selection-start-line="44" selection-start-column="8" selection-end-line="44" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/log4j2.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
@@ -1389,6 +1373,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/jerry/glory/ViewChooseBackground.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/jerry/glory/ViewChooseHero.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
@@ -1401,30 +1392,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/jerry/glory/ViewChooseBackground.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/jerry/glory/GUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="34" selection-start-line="34" selection-end-line="34" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1640#1661#0" expanded="true" />
-            <element signature="e#2836#3193#0" expanded="true" />
-            <element signature="e#3192#3193#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/jerry/mapObjects/heroes/Hero.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="284">
-          <caret line="294" column="55" lean-forward="true" selection-start-line="294" selection-start-column="55" selection-end-line="294" selection-end-column="55" />
+        <state relative-caret-position="71">
+          <caret line="347" column="62" lean-forward="true" selection-start-line="347" selection-start-column="62" selection-end-line="347" selection-end-column="62" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#4091#4092#0" expanded="true" />
@@ -1435,6 +1406,26 @@
             <element signature="e#11526#11527#0" expanded="true" />
             <marker date="1544024021226" expanded="true" signature="11912:11944" ph="{...}" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/jerry/glory/GUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="83">
+          <caret line="100" column="13" lean-forward="true" selection-start-line="100" selection-start-column="13" selection-end-line="100" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1640#1661#0" expanded="true" />
+            <element signature="e#2836#3193#0" expanded="true" />
+            <element signature="e#3192#3193#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/commands">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="402">
+          <caret line="41" column="12" selection-start-line="41" selection-start-column="12" selection-end-line="41" selection-end-column="12" />
         </state>
       </provider>
     </entry>

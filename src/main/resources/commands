@@ -1,25 +1,47 @@
-move s 10
-move d 10
-move a 2
-move a 20
-move w 10
-attack 2 1
-move d 10
-move s 10
-move a 20
-move w 20
-move s 10
-move d 10
-move a 2
-move a 20
-move w 10
-attack 2 1
-move d 10
-move s 10
-move a 20
-move w 20
-move s 10
-move d 10
+1 move s
+2 move d
+1 move a
+2 move a
+5 move w
+3 attack 2 1
+2 move d
+6 move s
+5 move a
+6 move w
+7 move s
+9 move d
+10 move a
+3 move a
+4 move w
+2 attack 2 1
+2 move d
+4 move s
+1 move a
+4 move w
+5 move s
+5 move d
+1 move s
+2 move d
+1 move a
+2 move a
+5 move w
+3 attack 2 1
+2 move d
+6 attack 4 1
+5 move a
+6 move w
+7 move s
+9 move d
+10 move a
+3 move a
+4 move w
+2 attack 2 1
+2 move d
+4 move s
+1 move a
+5 attack 3 8
+5 move s
+5 move d
 move a 2
 move a 20
 move w 10
