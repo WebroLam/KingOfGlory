@@ -39,5 +39,6 @@ public class MapBoundaries implements MapObject {
 	}
 	public void draw(JFrame frame) {
 
+
 	}
 }

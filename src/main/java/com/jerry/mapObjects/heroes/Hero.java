@@ -29,6 +29,7 @@ public class Hero implements MapObject,CharacterInterface{
 	protected int maxHealth;
 	protected double HealthIncreaseSpeed;
 	protected int currentHealth;
+    int randomTravelCount;
 	protected int maxMP;
 	protected double MPIncreaseSpeed;
 	protected int currentMP;
@@ -39,10 +40,13 @@ public class Hero implements MapObject,CharacterInterface{
 	public BufferedImage image;
 	public JLabel label;
 	public String name;
+	public int speed = 100;
 	private final static int MAXLEVEL = 18;
 	private final static int []EXPNeedForLevelingUp = {100,200,300,400,600,700,
 											1000,1200,1400,1500,1600,1600,
 											1600,1600,1600,1600,1600};
+	Thread autoPerformThread;
+	public int id;
     Ability ability;
     GUI game = null;
 	public String Team;
@@ -76,6 +80,7 @@ public class Hero implements MapObject,CharacterInterface{
 
 	public Hero(@NotNull JSONObject jsonObj) {
 		try{
+		    id = jsonObj.getInt("id");
 		    appearance = jsonObj.getString("appearance");
 		    level = 1;
 		    currentExp = 0;
@@ -93,6 +98,7 @@ public class Hero implements MapObject,CharacterInterface{
 		    Team = jsonObj.getString("Team");
 		    attackSplit = jsonObj.getDouble("attackSplit");
 			String imageName = jsonObj.getString("image");
+			name = imageName;
 			try {
 				File imageFile = new File(ImageFilePath + imageName);
 				image = ImageIO.read(imageFile);
@@ -109,6 +115,7 @@ public class Hero implements MapObject,CharacterInterface{
 	}
 
 	public void attack(Hero defender) {
+
 		if(!game.mapObjectLocation.containsKey(defender)) {
 			return;
 			// Oppsite Hero not in the game.
@@ -117,10 +124,21 @@ public class Hero implements MapObject,CharacterInterface{
 			return;
 			// Both hero are on the same team
 		}
+		if(game.mapObjectLocation.get(this).distanceTo(game.mapObjectLocation.get(defender)) <= attackDistance) {
+		    game.text.append(defender.name + " got attacked with: " + attackDamage + " His current health = " + defender.currentHealth +  "\n");
+		    defender.currentHealth -= this.attackDamage;
+		    if(defender.currentHealth <= 0) {
+		        defender.currentHealth = 0;
+		        defender.ReSpawn();
 
+            }
+        }
+        game.text.append("defender Done!\n");
 
 	}
-
+	public int getId() {
+		return id;
+	}
 	/**
 	 * Draw this Hero's image on the map.
 	 * @param g the graphics
@@ -179,11 +197,6 @@ public class Hero implements MapObject,CharacterInterface{
 	public int getCurrentHealth() {
 	    return currentHealth;
     }
-	// Define ReSpawn time as level * 2.
-	public void ReSpawn() {
-		currentHealth = maxHealth;
-		currentMP = maxMP;
-	}
 	public void Die() {
 
 	}
@@ -204,8 +217,6 @@ public class Hero implements MapObject,CharacterInterface{
 		result += " Level: " + level + " Exp: " + currentExp + "\n";
 		return result;
     }
-
-
     /**
      * Make this hero be attacked by certain damage
      * @param damage the amount of damage to take.
@@ -259,6 +270,7 @@ public class Hero implements MapObject,CharacterInterface{
                 try {
                     Thread.sleep(deadHero.getLevel() * 2 * 1000);
                 } catch (InterruptedException e) {
+                	e.printStackTrace();
                 }
                 battleFieldControl.SpawnHero(deadHero);
                 deadHero.ReSpawn();
@@ -267,18 +279,6 @@ public class Hero implements MapObject,CharacterInterface{
     }
 
     public boolean moveTo(final Location loc) {
-//        while (!game.mapObjectLocation.get(this).equals(loc)) {
-//            game.mapObjectLocation.get(this).TravelTo(loc);
-//            new Thread(new Runnable() {
-//                public void run() {
-//                    try {
-//                        Thread.sleep(100);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }).start();
-//        }
         final Location thisLoc = game.mapObjectLocation.get(this);
         new Thread(new Runnable() {
             public void run() {
@@ -287,7 +287,6 @@ public class Hero implements MapObject,CharacterInterface{
                     game.text.append("Trigger NULL\n");
                     return;
                 }
-
                 while(true) {
                     Location oldLoc = new Location(thisLoc);
                     boolean result = thisLoc.TravelTo(loc);
@@ -298,12 +297,10 @@ public class Hero implements MapObject,CharacterInterface{
                             return;
                         }
                     }
-                    game.text.append("Moved onece\n");
-                    game.text.append("Current Loc: " + thisLoc.xLoc + " " + thisLoc.yLoc + "\n");
-                    if (result == true)
+                    if (result)
                         return;
                     try {
-                        Thread.sleep(10);
+                        Thread.sleep(1000 / speed);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -311,8 +308,90 @@ public class Hero implements MapObject,CharacterInterface{
             }
             }
         }).start();
-        game.text.append("Returning false\n");
         return thisLoc.xLoc == loc.xLoc && thisLoc.yLoc == loc.yLoc;
+    }
+    public void ReSpawn() {
+        final Hero hero = this;
+        game.mapObjectLocation.remove(this);
+        game.text.append(name + " Died!\n" );
+
+    	new Thread(new Runnable() {
+			public void run() {
+				try {
+				    Thread.sleep(level * 1000 * 5); // respawn time is 5 times current level
+                    hero.currentHealth = maxHealth;
+                    hero.currentMP = maxMP;
+                    game.SpawnHero(hero);
+                    game.text.append(hero.name + " Respawned!\n");
+                } catch (Exception e) {
+				    e.printStackTrace();
+                }
+			}
+		}).start();
+
+	}
+    /**
+     * Auto perform operation.
+     *
+     */
+    public void autoPerform() {
+        logger.debug(name + "Entered autoPerform.");
+//        game.text.append("Auto perform\n");
+        Hero opposite = this;
+        for(Hero hero : game.heroes) {
+            if(hero.getTeam().equals(this.getTeam())){
+                continue;
+            }
+
+            if(game.mapObjectLocation.get(hero).distanceTo(game.mapObjectLocation.get(this)) < this.attackDistance ){
+                this.attack(hero);
+                logger.debug(name + " attacked " + hero.name);
+                return;
+            }
+            if(!hero.getTeam().equals(this.getTeam())) {
+                opposite = hero;
+            }
+        }
+        Location thisLoc = game.mapObjectLocation.get(this);
+        Location oppLoc = game.mapObjectLocation.get(opposite);
+        if(randomTravelCount <= 0) {
+            if(!this.moveTo(oppLoc))
+                randomTravelCount = 100;
+        }
+        else {
+            randomMove();
+        }
+
+    }
+    public void randomMove() {
+        Location thisLoc = game.mapObjectLocation.get(this);
+//        game.text.append("Moving randomly\n");
+        randomTravelCount--;
+        char dirs[] = {
+                'w',
+                'a',
+                's',
+                'd'
+        };
+        thisLoc.Move(dirs[(int)Math.random()*4],game.mapObjectLocation);
+    }
+    public void startAutoPerform() {
+        autoPerformThread = new Thread(new Runnable() {
+            public void run() {
+                synchronized (game) {
+                    while(true) {
+                        try {
+                            autoPerform();
+                            Thread.sleep(1000);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            }
+        });
+        autoPerformThread.start();
     }
 }
 

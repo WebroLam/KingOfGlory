@@ -16,10 +16,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.TimerTask;
 import java.util.Vector;
-import javax.swing.Timer;
+import static com.jerry.glory.ViewChooseHero.PlayerChosen;
 
 import static com.jerry.jsonHandle.readJSONStringFromFile;
 
@@ -27,36 +30,33 @@ public class GUI extends JPanel {
     static final int imageSizeX = 24;
     static final int imageSizeY = 24;// Use this to drawImage.
     public JTextArea text = new JTextArea();
-//    public JScrollPane scrollPane = new JScrollPane(text);
+    public File ioFile;
+    public BufferedImage background;
+
     private JFrame infoFrame = new JFrame("info");
+    JFrame frame = new JFrame("Game");
 
     public Vector<Hero> heroes = null;
-
     Location[] SpawnPointTeamRed = new Location[10];
     Location[] SpawnPointTeamBlue = new Location[10];
+    boolean MapMatrix[][];
     public static int Frame_Width = 25 * imageSizeX;
     public static int Frame_Height = 15 * imageSizeY;
     public static int ScreenHeight = 15;
     public static int ScreenWidth = 25;
     public Hero player;
     public HashMap<MapObject, Location> mapObjectLocation = new HashMap<MapObject, Location>();
-    private Timer timer;
-
     public void launchFrame() {
-//        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-//        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-//        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//        scrollPane.setVisible(true);
         setSize(Frame_Width, Frame_Height);
         setLocation(1000, 100);
         setVisible(true);
-//        setResizable(false);
-        JFrame frame = new JFrame("Game");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.add(this);
-        frame.setVisible(true);
         frame.setSize(Frame_Width, Frame_Height + 100);
-        infoFrame.add(text);
+        frame.setVisible(true);
+
+        JScrollPane infoScroll = new JScrollPane(text);
+        infoFrame.add(infoScroll);
         infoFrame.setSize(200,800);
         infoFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         infoFrame.setVisible(true);
@@ -65,16 +65,25 @@ public class GUI extends JPanel {
         super();
         mapObjectLocation = new HashMap<MapObject, Location>();
     }
+
     public GUI() {
         super();
+        ioFile = new File("commands.txt");
+        try {
+            FileWriter writer = new FileWriter(ioFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
         MouseLis mouseListener = new MouseLis();
         this.addMouseListener(mouseListener);
         initSpawnLocation();
+
         Thread ViewThread = new Thread(new Runnable() {
             public void run() {
                 while(true) {
                     try{
-                        Thread.sleep(25);
+                        Thread.sleep(25); // FPS = 1000 / 25 = 40
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -98,11 +107,8 @@ public class GUI extends JPanel {
             obj.draw(g,converted);
         }
     }
-//    @Override
-//    public void paint(Graphics g) {
-//        super.paint(g);
-//
-//    }
+
+
 
     /**
      * Add bounds to the game, such as trees.
@@ -133,32 +139,36 @@ public class GUI extends JPanel {
         final int objLocations[] = {};
 
     }
-
+    // TODO: Main Thread will be jamed when a hero is pending to be respawned.
     // Doing something with the heroes.
     private void initHero() {
+        Hero chosen = PlayerChosen(frame,text);
         heroes = new Vector<Hero>();
         final int heroSize = 10;
-        try{
+        try {
             JSONObject jsonObject = new JSONObject(readJSONStringFromFile("Heroes.json"));
             JSONArray heroJSON = jsonObject.getJSONArray("Heroes");
             int index = 0;
-            for(;index < 1;index++) {
-                heroes.insertElementAt(new Hero(heroJSON.getJSONObject(index),this),0);
+            for(;index < 5;index++) {
+                heroes.insertElementAt(new Hero(heroJSON.getJSONObject(index),this),heroes.size());
             }
 
             for(;index < 10;index++) {
-//                heroes.insertElementAt(new automatic(heroJSON.getJSONObject(index),this),heroes.size());
                 heroes.insertElementAt(new autoProtecter(heroJSON.getJSONObject(index),this),heroes.size());
             }
-
         } catch (JSONException e) {
             System.out.println(e.toString());
         }
-
         for (Hero hero: heroes) {
             SpawnHero(hero);
         }
-        player = heroes.elementAt(0);
+        for(Hero hero : heroes) {
+            if(hero.getId() == chosen.getId()) {
+                player = hero;
+            } else {
+                hero.startAutoPerform();
+            }
+        }
     }
     private void initSpawnLocation() {
         int indexForBlue = 0;
@@ -204,25 +214,21 @@ public class GUI extends JPanel {
         game.launchFrame();
 
     }
-
-
     //TODO: Implement all this stuff.
     // Mouse event button 1 for main, 3 for sub
     class MouseLis implements MouseListener {
         public void mouseClicked(MouseEvent event) {
             Location target = new Location(event.getX() / imageSizeX , event.getY()/imageSizeY);
-            if(mapObjectLocation.containsValue(target)) {
-                for(Hero hero : heroes) {
-                    if(mapObjectLocation.get(hero) == target) {
-                        player.attack(hero);
-                    }
+            for(Hero hero : heroes) {
+                if(mapObjectLocation.get(hero).distanceTo(target) == 0) {
+                    player.attack(hero);
+                    text.append(hero.name + " got attacked. Current health: " + hero.getCurrentHealth() + "\n");
+                    return;
                 }
-
             }
-            else {
-            player.moveTo(new Location(event.getX()/imageSizeX,event.getY()/imageSizeY));
-            text.append("Got :" + event.getX()/imageSizeX+" and " + event.getY()/imageSizeY + "\n"); }
 
+            player.moveTo(new Location(event.getX()/imageSizeX,event.getY()/imageSizeY));
+            text.append("Got :" + event.getX()/imageSizeX+" and " + event.getY()/imageSizeY + "\n");
         }
         public void mousePressed(MouseEvent event) {
 

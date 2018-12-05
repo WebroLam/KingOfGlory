@@ -1,6 +1,7 @@
 {
   "Heroes":[
-    {"id":1,
+    {
+      "id":1,
       "appearance":"🐶",
       "attackDistance":2,
       "attackDamage":1000,
@@ -35,7 +36,7 @@
     {
       "id":3,
       "appearance":"🦋",
-      "attackDistance":100,
+      "attackDistance":3,
       "attackDamage":1189,
       "attackSplit":0,
       "attackDamageIncreaseSpeed":1.5,
@@ -84,8 +85,8 @@
     {
       "id":6,
       "appearance":"👺",
-      "attackDistance":3,
-      "attackDamage":50,
+      "attackDistance":0,
+      "attackDamage":5,
       "attackSplit":2,
       "attackDamageIncreaseSpeed":1.5,
       "AbilityPower":10,

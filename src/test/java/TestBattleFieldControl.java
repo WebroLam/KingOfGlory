@@ -46,17 +46,6 @@ public class TestBattleFieldControl {
     	hero1.beAttacked(damageTotake);
         Assertions.assertEquals(initialHealth-damageTotake,hero1.getCurrentHealth());
 	}
-
-	@Test
-	public void TestMapPrint() {
-
-	}
-
-	@Test
-	public void TestHeroMove() {
-
-	}
-
 	@Test
 	public void TestHeroDieAndReSpawn() {
         init();
@@ -66,7 +55,6 @@ public class TestBattleFieldControl {
         hero1.ReSpawn();
         Assertions.assertEquals(fullHealth,hero1.getCurrentHealth());
 	}
-
 	@Test
 	@DisplayName("Test Warrior")
 	public void testWarrior() {

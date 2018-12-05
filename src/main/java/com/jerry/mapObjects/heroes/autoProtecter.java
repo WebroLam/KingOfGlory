@@ -20,7 +20,6 @@ public class autoProtecter extends automatic {
         Hero teammate = null;
         for(Hero hero :game.heroes) {
             if(!hero.getTeam().equals(this.getTeam()) && game.mapObjectLocation.get(hero).distanceTo(game.mapObjectLocation.get(this)) < this.attackDistance ){
-
                 this.attack(hero);
                 logger.debug(name + " attacked " + hero.name);
                 return;
