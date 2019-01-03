@@ -9,36 +9,35 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicTabbedPaneUI;
-import javax.swing.plaf.basic.BasicTabbedPaneUI.MouseHandler;
-import javax.swing.text.View;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.HashMap;
-import java.util.TimerTask;
 import java.util.Vector;
 import static com.jerry.glory.ViewChooseHero.PlayerChosen;
 
 import static com.jerry.jsonHandle.readJSONStringFromFile;
 
-public class GUI extends JPanel {
+public class Server {
+    // SERVER
+    public static final int SERVER_PORT = 13;
+    public static final int MAX_PLAYER =  2;
+    private ServerSocket server;
     static final int imageSizeX = 24;
     static final int imageSizeY = 24;// Use this to drawImage.
     public JTextArea text = new JTextArea();
+
     public File ioFile;
     public BufferedImage background;
-
     private JFrame infoFrame = new JFrame("info");
     JFrame frame = new JFrame("Game");
-
     public Vector<Hero> heroes = null;
     Location[] SpawnPointTeamRed = new Location[10];
     Location[] SpawnPointTeamBlue = new Location[10];
+    private int active_user;
     boolean MapMatrix[][];
     public static int Frame_Width = 25 * imageSizeX;
     public static int Frame_Height = 15 * imageSizeY;
@@ -46,70 +45,115 @@ public class GUI extends JPanel {
     public static int ScreenWidth = 25;
     public Hero player;
     public HashMap<MapObject, Location> mapObjectLocation = new HashMap<MapObject, Location>();
-    public void launchFrame() {
-        setSize(Frame_Width, Frame_Height);
-        setLocation(1000, 100);
-        setVisible(true);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.add(this);
-        frame.setSize(Frame_Width, Frame_Height + 100);
-        frame.setVisible(true);
-
-        JScrollPane infoScroll = new JScrollPane(text);
-        infoFrame.add(infoScroll);
-        infoFrame.setSize(200,800);
-        infoFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        infoFrame.setVisible(true);
-    }
-    public GUI(Hero hero) {// test only
-        super();
-        mapObjectLocation = new HashMap<MapObject, Location>();
-    }
-
-    public GUI() {
-        super();
-        ioFile = new File("commands.txt");
+    private void initSocket() {
         try {
-            FileWriter writer = new FileWriter(ioFile);
+            ServerSocket server = new ServerSocket(SERVER_PORT);
         } catch (Exception e) {
             e.printStackTrace();
-            System.exit(-1);
         }
-        MouseLis mouseListener = new MouseLis();
-        this.addMouseListener(mouseListener);
-        initSpawnLocation();
+    }
+    private void addHero(int HeroNum) {
+        if(heroes == null)
+            heroes = new Vector<Hero>();
+        try {
+            JSONObject jsonObject = new JSONObject(readJSONStringFromFile("Heroes.json"));
+            JSONArray heroJSON = jsonObject.getJSONArray("Heroes");
+            int index = HeroNum;
+            heroes.insertElementAt(new Hero(heroJSON.getJSONObject(index)),0);
+            active_user++;
+        } catch (JSONException e) {
+            System.out.println(e.toString());
+        }
+        for (Hero hero: heroes) {
+            SpawnHero(hero);
+        }
+    }
+    private void HandleRequest(Socket client) {
+        try {
+            BufferedReader buf = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            String temp = buf.readLine();
+            if(temp.equals("request")) {
+                PrintStream out = new PrintStream(client.getOutputStream());
+                out.println(heroes.size());
+                for (Hero hero : heroes) {
+                    out.println(hero.id);
+                    out.println(mapObjectLocation.get(hero).xLoc);
+                    out.println(mapObjectLocation.get(hero).yLoc);
+                }
+            } else {
+                int HeroNum = Integer.parseInt(temp);
+                int xLoc = Integer.parseInt(buf.readLine());
+                int yLoc = Integer.parseInt(buf.readLine());
+                Location clickLoc = new Location(xLoc,yLoc);
+                ProcessClick(HeroNum,clickLoc);
+            }
 
-        Thread ViewThread = new Thread(new Runnable() {
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void ProcessClick(int HeroNum,Location loc) {
+        Hero player = null;
+        for(Hero hero : heroes) {
+            if(hero.id == HeroNum)
+                player = hero;
+        }
+        for(Hero hero : heroes) {
+            if(mapObjectLocation.get(hero).distanceTo(loc) == 0) {
+                player.attack(hero);
+                text.append(hero.name + " got attacked. Current health: " + hero.getCurrentHealth() + "\n");
+                return;
+            }
+        }
+
+        player.moveTo(new Location(loc));
+
+    }
+
+    private void HandleLogin(Socket client) {
+        try {
+            BufferedReader buf = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            String temp = buf.readLine();
+            int HeroNum = Integer.parseInt(temp);
+            addHero(HeroNum);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void OnLogin() {
+        while(active_user < MAX_PLAYER) {
+            Socket client = null;
+            try {
+                client = server.accept();
+                HandleLogin(client);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public Server() {
+        initSpawnLocation();
+        initSocket();
+        addObjects();
+        OnLogin();
+        new Thread(new Runnable() {
             public void run() {
-                while(true) {
-                    try{
-                        Thread.sleep(25); // FPS = 1000 / 25 = 40
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                Socket client = null;
+                try {
+                    synchronized (mapObjectLocation) {
+                        Thread.sleep(10);
+                      client = server.accept();
+                    HandleRequest(client);
                     }
-                    repaint();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
-            });
-        ViewThread.setPriority(Thread.MAX_PRIORITY);
-        ViewThread.start();
-        initHero();
-        addObjects();
+        }).start();
     }
-
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        for(MapObject obj : mapObjectLocation.keySet()) {
-            Location baseLoc = mapObjectLocation.get(obj);
-            Location converted = new Location(baseLoc.xLoc * imageSizeX,baseLoc.yLoc * imageSizeY);
-            obj.draw(g,converted);
-        }
-    }
-
-
-
     /**
      * Add bounds to the game, such as trees.
      */
@@ -126,19 +170,11 @@ public class GUI extends JPanel {
         for(int i = 7,j = 11, count = 0;count <= 8;count++) {
             mapObjectLocation.put(new MapBoundaries(), new Location(i++,j--));
         }
-//		for(int j =0;j < ScreenHeight;j++) {
-//			mapObjectLocation.put(new MapBoundaries(Integer.toString(j)),new Location(0 + 1,j));
-//			mapObjectLocation.put(new MapBoundaries(Integer.toString(j)),new Location(ScreenWidth - 2,j));
-//		}
-//		for(int i = 0;i < ScreenWidth;i++) {
-//			mapObjectLocation.put(new MapBoundaries(Integer.toString(i)),new Location(i,1));
-//			mapObjectLocation.put(new MapBoundaries(Integer.toString(i)),new Location(i,ScreenHeight - 2));
-//		}
-
         //TODO: Find the object locations.
         final int objLocations[] = {};
-
     }
+
+
     // TODO: Main Thread will be jamed when a hero is pending to be respawned.
     // Doing something with the heroes.
     private void initHero() {
@@ -210,9 +246,7 @@ public class GUI extends JPanel {
 
 
     public static void main(String [] args) {
-        GUI game = new GUI();
-        game.launchFrame();
-
+        Server server = new Server();
     }
     //TODO: Implement all this stuff.
     // Mouse event button 1 for main, 3 for sub

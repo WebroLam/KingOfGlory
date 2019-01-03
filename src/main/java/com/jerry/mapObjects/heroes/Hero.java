@@ -1,7 +1,8 @@
 package com.jerry.mapObjects.heroes;
 
 import com.jerry.glory.BattleFieldControl;
-import com.jerry.glory.GUI;
+import com.jerry.glory.Client;
+import com.jerry.glory.Server;
 import com.jerry.mapObjects.Location;
 import com.jerry.mapObjects.MapObject;
 import com.jerry.ability.*;
@@ -12,12 +13,10 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
 import org.apache.logging.log4j.*;
-import org.apache.logging.log4j.*;
+
 public class Hero implements MapObject,CharacterInterface{
 	private static Logger logger = LogManager.getLogger();
     private final static String ImageFilePath = "src/main/resources/images/";
@@ -48,7 +47,7 @@ public class Hero implements MapObject,CharacterInterface{
 	Thread autoPerformThread;
 	public int id;
     Ability ability;
-    GUI game = null;
+    Server game = null;
 	public String Team;
 	public Hero() {
 	    maxHealth = 500;
@@ -73,7 +72,7 @@ public class Hero implements MapObject,CharacterInterface{
 	    return Team;
     }
 
-    public Hero(JSONObject obj,@NotNull GUI game) {
+    public Hero(JSONObject obj,@NotNull Server game) {
 	    this(obj);
 	    this.game = game;
     }

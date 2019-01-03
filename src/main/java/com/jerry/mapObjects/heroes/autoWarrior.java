@@ -1,10 +1,11 @@
 package com.jerry.mapObjects.heroes;
-import com.jerry.glory.GUI;
+import com.jerry.glory.Client;
+import com.jerry.glory.Server;
 import org.json.JSONObject;
 public class autoWarrior extends automatic {
     int attackBuff;
 
-    public autoWarrior(JSONObject obj, GUI game) {
+    public autoWarrior(JSONObject obj, Server game) {
         super(obj,game);
     }
 

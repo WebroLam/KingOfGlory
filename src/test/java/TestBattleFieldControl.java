@@ -1,22 +1,18 @@
-import com.jerry.glory.GUI;
+import com.jerry.glory.Client;
+import com.jerry.glory.Server;
 import com.jerry.mapObjects.Location;
-import com.jerry.mapObjects.MapObject;
 import com.jerry.mapObjects.heroes.Hero;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.*;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.apache.logging.log4j.*;
-import org.apache.logging.log4j.util.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import static com.jerry.jsonHandle.readJSONStringFromFile;
-import com.jerry.mapObjects.*;
-import com.jerry.mapObjects.heroes.*;
 
-import java.util.HashMap;
+import com.jerry.mapObjects.heroes.*;
 
 public class TestBattleFieldControl {
 
@@ -61,7 +57,7 @@ public class TestBattleFieldControl {
 		try{
 			JSONObject jsonObject = new JSONObject(readJSONStringFromFile("Heroes.json"));
 			JSONArray heroJSON = jsonObject.getJSONArray("Heroes");
-			GUI game = new GUI();
+			Server game = new Server();
 
 			autoWarrior warrior = new autoWarrior(heroJSON.getJSONObject(0),game);
 			game.mapObjectLocation.put(warrior,new Location(1,1));

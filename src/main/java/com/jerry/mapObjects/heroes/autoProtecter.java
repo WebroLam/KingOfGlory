@@ -1,5 +1,6 @@
 package com.jerry.mapObjects.heroes;
-import com.jerry.glory.GUI;
+import com.jerry.glory.Client;
+import com.jerry.glory.Server;
 import com.jerry.mapObjects.Location;
 import org.json.JSONObject;
 
@@ -7,7 +8,7 @@ import org.json.JSONObject;
  * Holy Protector!!!
  */
 public class autoProtecter extends automatic {
-    public autoProtecter(JSONObject obj, GUI game) {
+    public autoProtecter(JSONObject obj, Server game) {
         super(obj,game);
     }
 

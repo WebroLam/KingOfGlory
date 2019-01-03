@@ -132,7 +132,7 @@ public class BattleFieldControl {
 	 * Add Hero to the Game.
 	 */
 	private void addHero() {
-		final int heroSize = 10;
+		final int heroSize = 2;
 		try{
 		    JSONObject jsonObject = new JSONObject(jsonHandle.readJSONStringFromFile("Heroes.json"));
 		    JSONArray heroJSON = jsonObject.getJSONArray("Heroes");

@@ -3,7 +3,6 @@ package com.jerry.glory;
 import com.jerry.mapObjects.Location;
 import com.jerry.mapObjects.MapObject;
 import com.jerry.mapObjects.heroes.Hero;
-import com.jerry.mapObjects.heroes.autoProtecter;
 import com.jerry.mapObjects.heroes.automatic;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,9 +20,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Vector;
 
-import static com.jerry.glory.GUI.Frame_Height;
-import static com.jerry.glory.GUI.Frame_Width;
-import static com.jerry.glory.GUI.imageSizeY;
+import static com.jerry.glory.Client.Frame_Height;
+import static com.jerry.glory.Client.Frame_Width;
 import static com.jerry.jsonHandle.readJSONStringFromFile;
 
 public class ViewChooseHero extends JComponent{
